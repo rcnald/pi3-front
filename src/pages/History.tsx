@@ -1,14 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import MainLayout from '../components/MainLayout';
+import { api } from '../services/api';
 
 type Objetivo = 'Sono' | 'Água' | 'Atividade Física';
 
 function History() {
   const [activeTab, setActiveTab] = useState<Objetivo>('Sono');
-  
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const { data } = await api.get('/users');
+        console.log(data);
+      } catch (err) {
+        console.error('Erro ao buscar usuários', err);
+      }
+    };
+    fetchUsers();
+  }, []);
+
   // Função para classes das Abas
   const getTabClass = (tabName: Objetivo) => {
-    const baseClass = "px-5 py-2 rounded-full font-medium transition-colors";
+    const baseClass = 'px-5 py-2 rounded-full font-medium transition-colors';
     if (tabName === activeTab) {
       return `${baseClass} bg-cyan-100 text-cyan-700 border border-cyan-200`;
     }
@@ -20,25 +33,34 @@ function History() {
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">
         Histórico de Registros
       </h1>
-      
+
       {/* Filtro de Abas */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
         <strong className="block text-sm font-medium text-gray-700 mb-3">
           Selecionar Objetivo
         </strong>
         <div className="flex space-x-3">
-          <button onClick={() => setActiveTab('Sono')} className={getTabClass('Sono')}>
+          <button
+            onClick={() => setActiveTab('Sono')}
+            className={getTabClass('Sono')}
+          >
             Sono
           </button>
-          <button onClick={() => setActiveTab('Água')} className={getTabClass('Água')}>
+          <button
+            onClick={() => setActiveTab('Água')}
+            className={getTabClass('Água')}
+          >
             Água
           </button>
-          <button onClick={() => setActiveTab('Atividade Física')} className={getTabClass('Atividade Física')}>
+          <button
+            onClick={() => setActiveTab('Atividade Física')}
+            className={getTabClass('Atividade Física')}
+          >
             Atividade Física
           </button>
         </div>
       </div>
-      
+
       {/* Grid de Conteúdo */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Card 1: Visão Geral (ocupa 1 coluna em telas grandes) */}
@@ -60,7 +82,7 @@ function History() {
             </div>
           </div>
         </div>
-        
+
         {/* Card 2: Gráfico (ocupa 2 colunas em telas grandes) */}
         <div className="bg-white p-8 rounded-lg border border-gray-200 lg:col-span-2">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
