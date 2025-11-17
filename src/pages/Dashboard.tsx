@@ -1,8 +1,8 @@
 import MainLayout from '../components/MainLayout';
-import { useHabitos } from '../hooks';
+import { useHabits } from '../hooks';
 
 function Dashboard() {
-  const { habitos, loading, error } = useHabitos();
+  const { habits, loading, error } = useHabits();
   const registros = [
     { id: 1, obj: 'Beber Água', qtd: 2000, un: 'mL', data: '24/10/2025' },
     { id: 2, obj: 'Caminhar', qtd: 30, un: 'min', data: '24/10/2025' },
@@ -12,7 +12,7 @@ function Dashboard() {
   ];
 
   return (
-    <MainLayout activePage="objetivos">
+    <MainLayout activePage="goals">
       {/* Seção 1: Registrar Novo Objetivo */}
       <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
@@ -29,9 +29,9 @@ function Dashboard() {
             {!loading && !error && (
               <select className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
                 <option>Selecione um hábito</option>
-                {habitos.map((habito) => (
-                  <option key={habito.id} value={habito.id}>
-                    {habito.name}
+                {habits.map((habit) => (
+                  <option key={habit.id} value={habit.id}>
+                    {habit.name}
                   </option>
                 ))}
               </select>

@@ -1,21 +1,23 @@
-import type { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 // import { Link, NavLink } from 'react-router-dom';
 // import { Bell, User, LayoutDashboard, LineChart, Settings } from 'lucide-react'; // Exemplo de ícones
 
-// Tipagem das props
-interface MainLayoutProps {
-  children: ReactNode;
-  activePage: 'objetivos' | 'progresso' | 'configuracoes';
-}
-
-// Map para facilitar a navegação (melhor que if/else)
+// Map to facilitate navigation (better than if/else)
 const navItems = [
-  { id: 'objetivos', name: 'Objetivos', path: '/' }, // icon: LayoutDashboard
-  { id: 'progresso', name: 'Progresso', path: '/history' }, // icon: LineChart
-  { id: 'configuracoes', name: 'Configurações', path: '/settings' }, // icon: Settings
+  { id: 'goals', name: 'Objetivos', path: '/' }, // icon: LayoutDashboard
+  { id: 'progress', name: 'Progresso', path: '/history' }, // icon: LineChart
+  { id: 'settings', name: 'Configurações', path: '/settings' }, // icon: Settings
 ];
 
 function MainLayout({ children, activePage }: MainLayoutProps) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
   
   // Função para classes ativas (CSS-in-JS do Tailwind)
   const getNavLinkClass = (page: string) => {
@@ -56,6 +58,12 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
               alt="Avatar do usuário" 
               className="w-10 h-10 rounded-full cursor-pointer" 
             />
+            <button 
+              onClick={handleLogout}
+              className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-cyan-600 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              Sair
+            </button>
           </div>
         </header>
         

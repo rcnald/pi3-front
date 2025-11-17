@@ -1,45 +1,33 @@
 import { useState, useEffect } from 'react';
 import { api } from '../services/api';
 
-export type Unit = {
-  id: number;
-  name: string;
-  simbolo: string;
-};
-
-export type Habit = {
-  id: number;
-  name: string;
-  unit: Unit;
-};
-
-type UseHabitosReturn = {
-  habitos: Habit[];
+type UseHabitsReturn = {
+  habits: Habit[];
   loading: boolean;
   error: string | null;
 };
 
-export const useHabitos = (): UseHabitosReturn => {
-  const [habitos, setHabitos] = useState<Habit[]>([]);
+export const useHabits = (): UseHabitsReturn => {
+  const [habits, setHabits] = useState<Habit[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchHabitos = async () => {
+    const fetchHabits = async () => {
       setLoading(true);
       setError(null);
       try {
         const response = await api.get<Habit[]>('/habits');
-        setHabitos(response.data);
+        setHabits(response.data);
       } catch (err: unknown) {
         const axiosErr = err as { message?: string; response?: { status: number } };
         if (axiosErr?.response?.status === 401) {
-          setError('Não autorizado. Por favor, faça login novamente.');
+          setError('Not authorized. Please login again.');
         } else {
           if (import.meta.env.DEV) {
-            setError(`Erro ao buscar hábitos: ${axiosErr?.message ?? 'Erro desconhecido'}`);
+            setError(`Error fetching habits: ${axiosErr?.message ?? 'Unknown error'}`);
           } else {
-            setError('Erro ao carregar hábitos.');
+            setError('Error loading habits.');
           }
         }
       } finally {
@@ -47,8 +35,8 @@ export const useHabitos = (): UseHabitosReturn => {
       }
     };
 
-    fetchHabitos();
+    fetchHabits();
   }, []);
 
-  return { habitos, loading, error };
+  return { habits, loading, error };
 };

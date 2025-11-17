@@ -4,19 +4,13 @@ import { api } from '../services/api';
 import MainLayout from '../components/MainLayout';
 // import { User, Bell, Moon, Droplet, Activity, ChevronRight, LogOut } from 'lucide-react'; // Exemplo de ícones
 
-type ProfileResponse = {
-  id: number;
-  nome: string;
-  email: string;
-};
-
 function Settings() {
   const navigate = useNavigate();
   const [success, setSuccess] = useState<string | null>(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [editNome, setEditNome] = useState('');
-  const [editSenhaAntiga, setEditSenhaAntiga] = useState('');
-  const [editSenhaNova, setEditSenhaNova] = useState('');
+  const [editName, setEditName] = useState('');
+  const [editOldPassword, setEditOldPassword] = useState('');
+  const [editNewPassword, setEditNewPassword] = useState('');
   const [editError, setEditError] = useState<string | null>(null);
   const [editLoading, setEditLoading] = useState(false);
 
@@ -39,20 +33,20 @@ function Settings() {
 
     try {
       const payload: Record<string, string> = {};
-      if (editNome.trim()) payload.nome = editNome;
-      if (editSenhaAntiga) payload.senha_antiga = editSenhaAntiga;
-      if (editSenhaNova) payload.senha_nova = editSenhaNova;
+      if (editName.trim()) payload.nome = editName;
+      if (editOldPassword) payload.senha_antiga = editOldPassword;
+      if (editNewPassword) payload.senha_nova = editNewPassword;
 
       const resp = await api.put<ProfileResponse>('/perfil', payload);
-      setSuccess(`Perfil atualizado com sucesso! Novo nome: ${resp.data.nome}`);
-      setEditNome('');
-      setEditSenhaAntiga('');
-      setEditSenhaNova('');
+      setSuccess(`Profile updated successfully! New name: ${resp.data.name}`);
+      setEditName('');
+      setEditOldPassword('');
+      setEditNewPassword('');
       setShowEditProfile(false);
     } catch (err: unknown) {
       const error = err as { response?: { status: number; data?: { erro?: string } }; message?: string };
       if (error?.response?.status === 400) {
-        setEditError(error.response.data?.erro ?? 'Requisição inválida.');
+        setEditError(error.response.data?.erro ?? 'Invalid request.');
       } else {
         if (import.meta.env.DEV) {
           setEditError(`Erro ao atualizar perfil: ${error?.message ?? 'Erro desconhecido'}`);
@@ -66,7 +60,7 @@ function Settings() {
   };
 
   return (
-    <MainLayout activePage="configuracoes">
+    <MainLayout activePage="settings">
       <h1 className="text-3xl font-semibold text-gray-800 mb-8">
         Configurações
       </h1>
@@ -155,8 +149,8 @@ function Settings() {
                 </label>
                 <input
                   type="text"
-                  value={editNome}
-                  onChange={(e) => setEditNome(e.target.value)}
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
                   placeholder="Deixe em branco para não alterar"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
@@ -168,8 +162,8 @@ function Settings() {
                 </label>
                 <input
                   type="password"
-                  value={editSenhaAntiga}
-                  onChange={(e) => setEditSenhaAntiga(e.target.value)}
+                  value={editOldPassword}
+                  onChange={(e) => setEditOldPassword(e.target.value)}
                   placeholder="Deixe em branco se não for alterar"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
@@ -181,8 +175,8 @@ function Settings() {
                 </label>
                 <input
                   type="password"
-                  value={editSenhaNova}
-                  onChange={(e) => setEditSenhaNova(e.target.value)}
+                  value={editNewPassword}
+                  onChange={(e) => setEditNewPassword(e.target.value)}
                   placeholder="Deixe em branco se não for alterar"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
                 />
@@ -201,9 +195,9 @@ function Settings() {
                   onClick={() => {
                     setShowEditProfile(false);
                     setEditError(null);
-                    setEditNome('');
-                    setEditSenhaAntiga('');
-                    setEditSenhaNova('');
+                    setEditName('');
+                    setEditOldPassword('');
+                    setEditNewPassword('');
                   }}
                   className="flex-1 py-2 rounded-md font-bold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
                 >

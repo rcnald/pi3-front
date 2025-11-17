@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import MainLayout from '../components/MainLayout';
 import { api } from '../services/api';
 
-type Objetivo = 'Sono' | 'Água' | 'Atividade Física';
-
 function History() {
-  const [activeTab, setActiveTab] = useState<Objetivo>('Sono');
+  const [activeTab, setActiveTab] = useState<Goal>('Sleep');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -19,8 +17,8 @@ function History() {
     fetchUsers();
   }, []);
 
-  // Função para classes das Abas
-  const getTabClass = (tabName: Objetivo) => {
+  // Function for tab classes
+  const getTabClass = (tabName: Goal) => {
     const baseClass = 'px-5 py-2 rounded-full font-medium transition-colors';
     if (tabName === activeTab) {
       return `${baseClass} bg-cyan-100 text-cyan-700 border border-cyan-200`;
@@ -29,7 +27,7 @@ function History() {
   };
 
   return (
-    <MainLayout activePage="progresso">
+    <MainLayout activePage="progress">
       <h1 className="text-3xl font-semibold text-gray-800 mb-6">
         Histórico de Registros
       </h1>
@@ -41,20 +39,20 @@ function History() {
         </strong>
         <div className="flex space-x-3">
           <button
-            onClick={() => setActiveTab('Sono')}
-            className={getTabClass('Sono')}
+            onClick={() => setActiveTab('Sleep')}
+            className={getTabClass('Sleep')}
           >
             Sono
           </button>
           <button
-            onClick={() => setActiveTab('Água')}
-            className={getTabClass('Água')}
+            onClick={() => setActiveTab('Water')}
+            className={getTabClass('Water')}
           >
             Água
           </button>
           <button
-            onClick={() => setActiveTab('Atividade Física')}
-            className={getTabClass('Atividade Física')}
+            onClick={() => setActiveTab('PhysicalActivity')}
+            className={getTabClass('PhysicalActivity')}
           >
             Atividade Física
           </button>

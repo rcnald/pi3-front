@@ -2,12 +2,6 @@ import { useState } from 'react';
 import { api } from '../services/api';
 import { Link } from "react-router-dom";
 
-type CreatedUser = {
-  id: number;
-  nome: string;
-  email: string;
-};
-
 function SignUp() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

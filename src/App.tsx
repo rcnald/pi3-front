@@ -1,18 +1,40 @@
-import { useState } from 'react';
 import { Dashboard, SignUp, Login, History, Settings } from './pages';
-import { Routes, Route } from "react-router-dom";
-
-
-type PageType = 'signup' | 'login' | 'dashboard' | 'history' | 'settings';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
-      <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/history" element={<History />} />
-      <Route path="/settings" element={<Settings />} />
+      <Route path="/signup" element={<SignUp />} />
+      
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/history" 
+        element={
+          <ProtectedRoute>
+            <History />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          <ProtectedRoute>
+            <Settings />
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Redireciona qualquer rota desconhecida para login */}
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
 }
