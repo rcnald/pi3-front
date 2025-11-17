@@ -1,5 +1,5 @@
 import { Dashboard, SignUp, Login, History, Settings } from './pages';
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 function App() {
@@ -7,32 +7,32 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      
-      <Route 
-        path="/" 
+
+      <Route
+        path="/"
         element={
           <ProtectedRoute>
             <Dashboard />
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path="/history" 
+      <Route
+        path="/history"
         element={
           <ProtectedRoute>
             <History />
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path="/settings" 
+      <Route
+        path="/settings"
         element={
           <ProtectedRoute>
             <Settings />
           </ProtectedRoute>
-        } 
+        }
       />
-      
+
       {/* Redireciona qualquer rota desconhecida para login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from '../services/api';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function SignUp() {
   const [name, setName] = useState('');
@@ -37,12 +37,17 @@ function SignUp() {
       setPassword('');
       setError(null);
     } catch (err: unknown) {
-      const error = err as { response?: { status: number; data?: { erro?: string } }; message?: string };
+      const error = err as {
+        response?: { status: number; data?: { erro?: string } };
+        message?: string;
+      };
       if (error?.response?.status === 400) {
         setError(error.response.data?.erro ?? 'Requisição inválida.');
       } else {
         if (import.meta.env.DEV) {
-          setError(`Erro ao cadastrar: ${error?.message ?? 'Erro desconhecido'}`);
+          setError(
+            `Erro ao cadastrar: ${error?.message ?? 'Erro desconhecido'}`
+          );
         } else {
           setError('Erro inesperado. Tente novamente mais tarde.');
         }
@@ -57,12 +62,15 @@ function SignUp() {
       {/* Cabeçalho */}
       <header className="flex justify-between items-center p-6 md:p-10">
         <span className="text-2xl font-bold text-cyan-600">Habitus</span>
-        <a href="/login" className="font-medium text-gray-700 hover:text-cyan-600">
+        <a
+          href="/login"
+          className="font-medium text-gray-700 hover:text-cyan-600"
+        >
           Entrar
         </a>
         {/* <Link to="/login" className="font-medium text-gray-700 hover:text-cyan-600">Entrar</Link> */}
       </header>
-      
+
       {/* Conteúdo Principal */}
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="bg-white p-8 md:p-10 rounded-lg shadow-sm max-w-md w-full text-center">
@@ -72,45 +80,54 @@ function SignUp() {
           <p className="text-gray-600 mb-8">
             Comece sua jornada de bem-estar hoje.
           </p>
-          
+
           <form onSubmit={handleSubmit} className="text-left space-y-5">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Nome
               </label>
-              <input 
+              <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                type="text" 
-                id="name" 
+                type="text"
+                id="name"
                 placeholder="Seu nome completo"
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email
               </label>
-              <input 
+              <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                type="email" 
-                id="email" 
+                type="email"
+                id="email"
                 placeholder="seu.email@exemplo.com"
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Senha
               </label>
-              <input 
+              <input
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                type="password" 
-                id="password" 
+                type="password"
+                id="password"
                 placeholder="Mínimo 8 caracteres"
                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
@@ -127,28 +144,30 @@ function SignUp() {
                 Conta criada com sucesso! ID: {createdUser.id}
               </div>
             )}
-            
-            <button 
+
+            <button
               type="submit"
               disabled={loading}
-              className={`w-full ${loading ? 'bg-cyan-400' : 'bg-cyan-600 hover:bg-cyan-700'} text-white py-3 rounded-md font-bold transition duration-200`}
+              className={`w-full ${
+                loading ? 'bg-cyan-400' : 'bg-cyan-600 hover:bg-cyan-700'
+              } text-white py-3 rounded-md font-bold transition duration-200`}
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </button>
           </form>
-          
+
           <p className="mt-8 text-sm text-gray-600">
-          Já tem uma conta?
-          <Link
-            to="/login"
-            className="font-bold text-cyan-600 hover:underline ml-1"
-          >
-            Entrar
-          </Link>
-        </p>
+            Já tem uma conta?
+            <Link
+              to="/login"
+              className="font-bold text-cyan-600 hover:underline ml-1"
+            >
+              Entrar
+            </Link>
+          </p>
         </div>
       </main>
-      
+
       {/* Rodapé */}
       <footer className="text-center p-6 text-sm text-gray-500">
         <p>© 2025. Habitus. Todos os direitos reservados.</p>

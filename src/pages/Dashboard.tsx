@@ -24,7 +24,9 @@ function Dashboard() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Objetivo
             </label>
-            {loading && <p className="text-sm text-gray-500">Carregando hábitos...</p>}
+            {loading && (
+              <p className="text-sm text-gray-500">Carregando hábitos...</p>
+            )}
             {error && <p className="text-sm text-red-600">{error}</p>}
             {!loading && !error && (
               <select className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">

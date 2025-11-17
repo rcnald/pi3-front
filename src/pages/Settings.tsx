@@ -44,12 +44,17 @@ function Settings() {
       setEditNewPassword('');
       setShowEditProfile(false);
     } catch (err: unknown) {
-      const error = err as { response?: { status: number; data?: { erro?: string } }; message?: string };
+      const error = err as {
+        response?: { status: number; data?: { erro?: string } };
+        message?: string;
+      };
       if (error?.response?.status === 400) {
         setEditError(error.response.data?.erro ?? 'Invalid request.');
       } else {
         if (import.meta.env.DEV) {
-          setEditError(`Erro ao atualizar perfil: ${error?.message ?? 'Erro desconhecido'}`);
+          setEditError(
+            `Erro ao atualizar perfil: ${error?.message ?? 'Erro desconhecido'}`
+          );
         } else {
           setEditError('Erro ao atualizar perfil. Tente novamente.');
         }
@@ -64,17 +69,20 @@ function Settings() {
       <h1 className="text-3xl font-semibold text-gray-800 mb-8">
         Configurações
       </h1>
-      
+
       {/* Seção 1: Minha Conta */}
       <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Minha Conta</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          Minha Conta
+        </h3>
         <p className="text-gray-600 text-sm mb-6">
           Gerencie suas informações de perfil e notificações.
         </p>
         <ul className="divide-y divide-gray-200">
-          <li 
+          <li
             onClick={() => setShowEditProfile(true)}
-            className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer">
+            className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
+          >
             <div className="flex items-center gap-4">
               {/* <User className="text-gray-500" /> */}
               <span className="font-medium text-gray-700">Meu perfil</span>
@@ -91,10 +99,12 @@ function Settings() {
           </li>
         </ul>
       </div>
-      
+
       {/* Seção 2: Minhas Metas */}
       <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
-        <h3 className="text-xl font-semibold text-gray-800 mb-2">Minhas Metas</h3>
+        <h3 className="text-xl font-semibold text-gray-800 mb-2">
+          Minhas Metas
+        </h3>
         <p className="text-gray-600 text-sm mb-6">
           Defina e ajuste suas metas de saúde e bem-estar.
         </p>
@@ -116,13 +126,15 @@ function Settings() {
           <li className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer">
             <div className="flex items-center gap-4">
               {/* <Activity className="text-gray-500" /> */}
-              <span className="font-medium text-gray-700">Meta Atividade Física</span>
+              <span className="font-medium text-gray-700">
+                Meta Atividade Física
+              </span>
             </div>
             <span>&gt;</span>
           </li>
         </ul>
       </div>
-      
+
       {/* Botão de Sair */}
       {success && (
         <div className="text-sm text-green-600 mb-4" role="status">
@@ -134,8 +146,10 @@ function Settings() {
       {showEditProfile && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Editar Perfil</h3>
-            
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+              Editar Perfil
+            </h3>
+
             {editError && (
               <div className="text-sm text-red-600 mb-4" role="alert">
                 {editError}
@@ -186,7 +200,11 @@ function Settings() {
                 <button
                   type="submit"
                   disabled={editLoading}
-                  className={`flex-1 py-2 rounded-md font-bold text-white ${editLoading ? 'bg-cyan-400' : 'bg-cyan-600 hover:bg-cyan-700'} transition`}
+                  className={`flex-1 py-2 rounded-md font-bold text-white ${
+                    editLoading
+                      ? 'bg-cyan-400'
+                      : 'bg-cyan-600 hover:bg-cyan-700'
+                  } transition`}
                 >
                   {editLoading ? 'Salvando...' : 'Salvar'}
                 </button>
@@ -208,7 +226,7 @@ function Settings() {
           </div>
         </div>
       )}
-      
+
       <button
         onClick={handleLogout}
         className="flex items-center gap-3 px-5 py-3 rounded-lg font-bold text-red-600 bg-red-100 hover:bg-red-200 transition-colors"
@@ -216,7 +234,6 @@ function Settings() {
         {/* <LogOut size={20} /> */}
         <span>Sair da Conta</span>
       </button>
-      
     </MainLayout>
   );
 }

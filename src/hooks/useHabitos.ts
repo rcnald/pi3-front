@@ -20,12 +20,17 @@ export const useHabits = (): UseHabitsReturn => {
         const response = await api.get<Habit[]>('/habits');
         setHabits(response.data);
       } catch (err: unknown) {
-        const axiosErr = err as { message?: string; response?: { status: number } };
+        const axiosErr = err as {
+          message?: string;
+          response?: { status: number };
+        };
         if (axiosErr?.response?.status === 401) {
           setError('Not authorized. Please login again.');
         } else {
           if (import.meta.env.DEV) {
-            setError(`Error fetching habits: ${axiosErr?.message ?? 'Unknown error'}`);
+            setError(
+              `Error fetching habits: ${axiosErr?.message ?? 'Unknown error'}`
+            );
           } else {
             setError('Error loading habits.');
           }
