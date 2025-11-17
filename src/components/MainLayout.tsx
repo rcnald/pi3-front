@@ -11,8 +11,8 @@ interface MainLayoutProps {
 // Map para facilitar a navegação (melhor que if/else)
 const navItems = [
   { id: 'objetivos', name: 'Objetivos', path: '/' }, // icon: LayoutDashboard
-  { id: 'progresso', name: 'Progresso', path: '/progresso' }, // icon: LineChart
-  { id: 'configuracoes', name: 'Configurações', path: '/configuracoes' }, // icon: Settings
+  { id: 'progresso', name: 'Progresso', path: '/history' }, // icon: LineChart
+  { id: 'configuracoes', name: 'Configurações', path: '/settings' }, // icon: Settings
 ];
 
 function MainLayout({ children, activePage }: MainLayoutProps) {
