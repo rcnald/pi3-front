@@ -1,21 +1,34 @@
 import { useState } from 'react';
 
 const AUTH_KEY = 'habitus_user_logged';
+const USER_KEY = 'habitus_user_data';
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
     return localStorage.getItem(AUTH_KEY) === 'true';
   });
 
-  const login = () => {
+  const login = (user: User) => {
     localStorage.setItem(AUTH_KEY, 'true');
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     localStorage.removeItem(AUTH_KEY);
+    localStorage.removeItem(USER_KEY);
     setIsAuthenticated(false);
   };
 
-  return { isAuthenticated, login, logout };
+  const getUser = (): User | null => {
+    const userData = localStorage.getItem(USER_KEY);
+    if (!userData) return null;
+    try {
+      return JSON.parse(userData) as User;
+    } catch {
+      return null;
+    }
+  };
+
+  return { isAuthenticated, login, logout, getUser };
 }

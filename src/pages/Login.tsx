@@ -32,7 +32,7 @@ function Login() {
         return;
       }
 
-      login();
+      login(user);
       navigate('/');
     } catch (err: unknown) {
       const error = err as {
