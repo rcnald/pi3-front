@@ -36,9 +36,24 @@ function History() {
           Selecionar Objetivo
         </strong>
         <div className="flex flex-wrap gap-3">
-          <button onClick={() => setActiveTab('Sleep')} className={getTabClass('Sleep')}>Sono</button>
-          <button onClick={() => setActiveTab('Water')} className={getTabClass('Water')}>Água</button>
-          <button onClick={() => setActiveTab('PhysicalActivity')} className={getTabClass('PhysicalActivity')}>Atividade Física</button>
+          <button
+            onClick={() => setActiveTab('Sleep')}
+            className={getTabClass('Sleep')}
+          >
+            Sono
+          </button>
+          <button
+            onClick={() => setActiveTab('Water')}
+            className={getTabClass('Water')}
+          >
+            Água
+          </button>
+          <button
+            onClick={() => setActiveTab('PhysicalActivity')}
+            className={getTabClass('PhysicalActivity')}
+          >
+            Atividade Física
+          </button>
         </div>
       </div>
 

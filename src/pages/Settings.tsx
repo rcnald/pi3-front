@@ -227,10 +227,7 @@ function Settings() {
         </div>
       )}
 
-      <button
-        onClick={handleLogout}
-        className="btn-logout active:scale-[.98]"
-      >
+      <button onClick={handleLogout} className="btn-logout active:scale-[.98]">
         {/* <LogOut size={20} /> */}
         <span>Sair da Conta</span>
       </button>
