@@ -2,11 +2,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import MainLayout from '../components/MainLayout';
-import { GoalModal, type GoalType, type GoalValue } from '../components';
+import GoalModal, { type GoalType, type GoalValue } from '../components/GoalModal';
+import { useAuth } from '../hooks/useAuth';
+import { useHabits } from '../hooks';
 // import { User, Bell, Moon, Droplet, Activity, ChevronRight, LogOut } from 'lucide-react'; // Exemplo de ícones
 
 function Settings() {
   const navigate = useNavigate();
+  const { getUser } = useAuth();
+  const { habits, loading: habitsLoading, error: habitsError } = useHabits();
   const [success, setSuccess] = useState<string | null>(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editName, setEditName] = useState('');
@@ -94,20 +98,65 @@ function Settings() {
   const handleSaveGoal = async (goal: GoalValue) => {
     if (!activeGoalType) return;
 
+    const user = getUser();
+    if (!user) {
+      setGoalModalError('Usuário não identificado. Faça login novamente.');
+      return;
+    }
+
+    if (habitsLoading) {
+      setGoalModalError('Carregando hábitos...');
+      return;
+    }
+
+    if (habitsError) {
+      setGoalModalError('Erro ao carregar hábitos.');
+      return;
+    }
+
+    // Mapeamento temporário de IDs de hábitos (ajuste conforme seu banco de dados)
+    const habitIds: Record<GoalType, number> = {
+      sleep: 2,
+      water: 1,
+      activity: 3,
+    };
+
+    const habitId = habitIds[activeGoalType];
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) {
+      setGoalModalError('Hábito não encontrado.');
+      return;
+    }
+
     setGoalModalLoading(true);
     setGoalModalError(null);
 
     try {
-      // Exemplo de requisição: await api.post(`/metas/${activeGoalType}`, goal);
+      const payload = {
+        userId: user.id,
+        habitId: habitId,
+        dailyGoal: goal.value,
+        unit: goal.unit,
+        weeklyFrequency: goal.weeklyFrequency,
+        startDate: new Date().toISOString().split('T')[0],
+      };
+
+      await api.post('/user-habits', payload);
+
       setCurrentGoals((prev) => ({ ...prev, [activeGoalType]: goal }));
       setSuccess(`Meta de ${goalTypeLabels[activeGoalType]} salva com sucesso!`);
       closeGoalModal();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: unknown) {
-      const error = err as { message?: string };
-      setGoalModalError(
-        error?.message ?? 'Erro ao salvar meta. Tente novamente.'
-      );
+      const error = err as { message?: string; response?: { status: number } };
+      
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        setGoalModalError('Sessão expirada ou sem permissão. Faça login novamente.');
+      } else {
+        setGoalModalError(
+          error?.message ?? 'Erro ao salvar meta. Tente novamente.'
+        );
+      }
     } finally {
       setGoalModalLoading(false);
     }

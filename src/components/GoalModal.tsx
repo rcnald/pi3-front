@@ -10,6 +10,8 @@ export type GoalUnitOption = {
 export type GoalValue = {
   value: string;
   unit: string;
+  goalMode?: 'daily' | 'weekly';
+  weeklyFrequency?: string;
 };
 
 const GOAL_CONFIG: Record<GoalType, {
@@ -18,34 +20,47 @@ const GOAL_CONFIG: Record<GoalType, {
   unitInputLabel: string;
   unitOptions: GoalUnitOption[];
   emptyValueMessage: string;
+  goalModeLabel: string;
+  minValue: number;
+  step: number;
 }> = {
   sleep: {
     title: 'Cadastrar meta de sono',
-    valueInputLabel: 'Horas',
+    valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
       { value: 'horas', label: 'Horas' },
+      { value: 'minutos', label: 'Minutos' },
     ],
-    emptyValueMessage: 'Informe a quantidade de horas desejada.',
+    emptyValueMessage: 'Informe a quantidade desejada (mínimo 1).',
+    goalModeLabel: 'Tipo de meta',
+    minValue: 1,
+    step: 1,
   },
   water: {
     title: 'Cadastrar meta de água',
-    valueInputLabel: 'Quantidade',
+    valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
       { value: 'ml', label: 'Mililitros (ml)' },
       { value: 'l', label: 'Litros (L)' },
     ],
-    emptyValueMessage: 'Informe a quantidade de água desejada.',
+    emptyValueMessage: 'Informe a quantidade de água desejada (mínimo 1).',
+    goalModeLabel: 'Tipo de meta',
+    minValue: 1,
+    step: 1,
   },
   activity: {
     title: 'Cadastrar meta de atividade física',
-    valueInputLabel: 'Quantidade',
+    valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
       { value: 'minutos', label: 'Minutos' },
     ],
-    emptyValueMessage: 'Informe a quantidade desejada para a meta.',
+    emptyValueMessage: 'Informe a quantidade de minutos desejada (mínimo 1 minuto).',
+    goalModeLabel: 'Tipo de meta',
+    minValue: 1,
+    step: 1,
   },
 };
 
@@ -76,15 +91,18 @@ const GoalModal = ({
 
   const valueInputId = useId();
   const unitInputId = useId();
+  const weeklyFrequencyInputId = useId();
 
   const [newGoalValue, setNewGoalValue] = useState(currentGoal?.value ?? '');
   const [newGoalUnit, setNewGoalUnit] = useState(defaultUnit);
+  const [weeklyFrequency, setWeeklyFrequency] = useState(currentGoal?.weeklyFrequency ?? '1');
   const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setNewGoalValue(currentGoal?.value ?? '');
       setNewGoalUnit(currentGoal?.unit ?? config.unitOptions[0]?.value ?? '');
+      setWeeklyFrequency(currentGoal?.weeklyFrequency ?? '1');
       setLocalError(null);
     }
   }, [config.unitOptions, currentGoal, isOpen]);
@@ -97,12 +115,23 @@ const GoalModal = ({
     event.preventDefault();
     const parsedValue = parseFloat(newGoalValue.replace(',', '.'));
 
-    if (!newGoalValue || Number.isNaN(parsedValue) || parsedValue <= 0) {
+    if (!newGoalValue || Number.isNaN(parsedValue) || parsedValue < config.minValue) {
       setLocalError(config.emptyValueMessage);
       return;
     }
 
-    await onSave({ value: newGoalValue, unit: newGoalUnit });
+    const parsedFrequency = parseInt(weeklyFrequency);
+    if (!weeklyFrequency || Number.isNaN(parsedFrequency) || parsedFrequency <= 0 || parsedFrequency > 7) {
+      setLocalError('Informe uma frequência semanal válida (1 a 7 vezes por semana).');
+      return;
+    }
+
+    await onSave({ 
+      value: newGoalValue, 
+      unit: newGoalUnit,
+      goalMode: 'weekly', // Always weekly now as it combines both
+      weeklyFrequency: weeklyFrequency,
+    });
   };
 
   const combinedError = localError ?? errorMessage;
@@ -110,7 +139,7 @@ const GoalModal = ({
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center px-4">
       <div
-        className="absolute inset-0 bg-white/70 backdrop-blur-md"
+        className="absolute inset-0 bg-black/30 backdrop-blur-md"
         onClick={onClose}
         role="presentation"
       />
@@ -145,6 +174,14 @@ const GoalModal = ({
                   readOnly
                   className="w-48 rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
                 />
+                {currentGoal.goalMode && (
+                  <input
+                    type="text"
+                    value={`Frequência: ${currentGoal.weeklyFrequency ?? '7'}x/semana`}
+                    readOnly
+                    className="w-full rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
+                  />
+                )}
               </div>
             </div>
           )}
@@ -153,6 +190,27 @@ const GoalModal = ({
             <span className="mb-4 block text-center font-medium text-gray-700">
               Meta nova
             </span>
+            
+            <div className="mb-6 flex flex-col gap-2">
+              <label className="text-sm font-medium text-gray-600" htmlFor={weeklyFrequencyInputId}>
+                Frequência Semanal (dias por semana)
+              </label>
+              <input
+                id={weeklyFrequencyInputId}
+                type="number"
+                min="1"
+                max="7"
+                step="1"
+                value={weeklyFrequency}
+                onChange={(event) => setWeeklyFrequency(event.target.value)}
+                placeholder="Ex: 3"
+                className="rounded-md border-2 border-gray-400 px-4 py-3 text-lg focus:border-cyan-500 focus:outline-none"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Escolha de 1 a 7 vezes por semana
+              </p>
+            </div>
+
             <div className="flex flex-wrap justify-center gap-4">
               <div className="flex w-48 flex-col gap-1">
                 <label className="text-sm font-medium text-gray-600" htmlFor={valueInputId}>
@@ -161,8 +219,8 @@ const GoalModal = ({
                 <input
                   id={valueInputId}
                   type="number"
-                  min="0"
-                  step="0.1"
+                  min={config.minValue}
+                  step={config.step}
                   value={newGoalValue}
                   onChange={(event) => setNewGoalValue(event.target.value)}
                   className="rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg focus:border-cyan-500 focus:outline-none"
