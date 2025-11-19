@@ -5,6 +5,7 @@ import {
   useMeasurementUnits,
   useCreateRecord,
   useAuth,
+  useRecords, 
 } from '../hooks';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
 import type { MeasurementUnit } from '../models/measurementUnit';
@@ -22,6 +23,9 @@ function Dashboard() {
     error: createError,
     success,
   } = useCreateRecord();
+  
+  const { records, loading: recordsLoading, fetchRecords } = useRecords();
+  
   const { getUser } = useAuth();
 
   const [selectedHabitId, setSelectedHabitId] = useState<number | ''>('');
@@ -142,6 +146,7 @@ function Dashboard() {
     const numericValue = Number(quantity);
     if (Number.isNaN(numericValue) || numericValue <= 0) return;
     const formattedDate = formatDateToOffset(date);
+    
     await createRecord({
       userId: user.id,
       habitId: Number(selectedHabitId),
@@ -150,26 +155,36 @@ function Dashboard() {
       baseUnitId: baseUnitId!,
       date: formattedDate,
     });
+
+    
+    
+    // ATUALIZA A LISTA:
+    await fetchRecords(); 
+
     setQuantity('');
     setDate('');
   };
-  const registros = [
-    { id: 1, obj: 'Beber Água', qtd: 2000, un: 'mL', data: '24/10/2025' },
-    { id: 2, obj: 'Caminhar', qtd: 30, un: 'min', data: '24/10/2025' },
-    { id: 3, obj: 'Meditar', qtd: 10, un: 'min', data: '23/10/2025' },
-    { id: 4, obj: 'Ler Livros', qtd: 20, un: 'páginas', data: '23/10/2025' },
-    { id: 5, obj: 'Alongamento', qtd: 15, un: 'min', data: '22/10/2025' },
-  ];
+
+  const formatDateDisplay = (dateString: string) => {
+    if (!dateString) return '-';
+    try {
+        const d = new Date(dateString);
+        return d.toLocaleDateString('pt-BR');
+    } catch {
+        return dateString;
+    }
+  };
 
   return (
     <MainLayout activePage="goals">
-      {/* Seção 1: Registrar Novo Objetivo */}
+      {/* Seção 1: Registrar Novo Objetivo (MANTIDA IGUAL) */}
       <div className="card-theme p-8 mb-8 animate-fade-in-up card-header-accent">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Registrar Novo Objetivo
         </h2>
 
         <form className="space-y-5" onSubmit={onSubmit}>
+          {/* ... (O CONTEÚDO DO FORMULÁRIO MANTÉM IGUAL AO SEU CÓDIGO ORIGINAL) ... */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Objetivo
@@ -275,7 +290,7 @@ function Dashboard() {
         </form>
       </div>
 
-      {/* Seção 2: Registros Diários */}
+      {/* Seção 2: Registros Diários (ATUALIZADA PARA USAR DADOS REAIS) */}
       <div className="card-theme p-8 animate-fade-in-up card-header-accent">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Registros Diários
@@ -303,36 +318,42 @@ function Dashboard() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {registros.map((reg) => (
-                <tr key={reg.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {reg.obj}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {reg.qtd}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {reg.un}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                    {reg.data}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                    <button className="text-cyan-600 hover:text-cyan-800">
-                      ✏️
-                    </button>
-                    <button className="text-red-600 hover:text-red-800">
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {recordsLoading ? (
+                  <tr><td colSpan={5} className="p-4 text-center">Carregando registros...</td></tr>
+              ) : records.length === 0 ? (
+                  <tr><td colSpan={5} className="p-4 text-center text-gray-500">Nenhum registro encontrado.</td></tr>
+              ) : (
+                  records.map((reg) => (
+                    <tr key={reg.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {/* Tenta acessar via objeto aninhado, ou exibe genérico se o backend não enviar */}
+                        {reg.userHabit?.habit?.name || "Hábito #" + reg.id}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {reg.value}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                         {/* Tenta acessar a unidade aninhada */}
+                        {reg.userHabit?.habit?.measurementUnit?.symbol || "-"}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {formatDateDisplay(reg.date)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                        <button className="text-cyan-600 hover:text-cyan-800">
+                          ✏️
+                        </button>
+                        <button className="text-red-600 hover:text-red-800">
+                          🗑️
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+              )}
             </tbody>
           </table>
         </div>
       </div>
-
-      {/* Removido ApiDemo conforme preferência de teste na History */}
     </MainLayout>
   );
 }
