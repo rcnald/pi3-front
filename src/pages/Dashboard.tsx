@@ -164,7 +164,7 @@ function Dashboard() {
   return (
     <MainLayout activePage="goals">
       {/* Seção 1: Registrar Novo Objetivo */}
-      <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
+      <div className="card-theme p-8 mb-8 animate-fade-in-up card-header-accent">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Registrar Novo Objetivo
         </h2>
@@ -180,7 +180,7 @@ function Dashboard() {
             {error && <p className="text-sm text-red-600">{error}</p>}
             {!loading && !error && (
               <select
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                className="input-theme"
                 value={selectedHabitId}
                 onChange={(e) =>
                   setSelectedHabitId(
@@ -208,7 +208,7 @@ function Dashboard() {
                 placeholder="1000"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                className="input-theme"
               />
             </div>
             <div>
@@ -223,7 +223,7 @@ function Dashboard() {
               )}
               {!unitsLoading && !unitsError && (
                 <select
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                  className="input-theme"
                   value={selectedUnitId}
                   onChange={(e) =>
                     setSelectedUnitId(
@@ -249,15 +249,15 @@ function Dashboard() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white"
+                className="input-theme"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-cyan-600 text-white py-3 rounded-md font-bold hover:bg-cyan-700 transition duration-200 disabled:opacity-60"
-            disabled={creating}
+            className="btn-primary w-full py-3 disabled:opacity-60"
+            disabled={creating || !canSubmit}
           >
             {creating ? 'Enviando...' : 'Registrar Objetivo'}
           </button>
@@ -276,13 +276,13 @@ function Dashboard() {
       </div>
 
       {/* Seção 2: Registros Diários */}
-      <div className="bg-white p-8 rounded-lg border border-gray-200">
+      <div className="card-theme p-8 animate-fade-in-up card-header-accent">
         <h2 className="text-2xl font-semibold text-gray-800 mb-6">
           Registros Diários
         </h2>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
+          <table className="table-theme">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

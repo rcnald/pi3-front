@@ -66,12 +66,12 @@ function Settings() {
 
   return (
     <MainLayout activePage="settings">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-8">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-8 animate-fade-in-up">
         Configurações
       </h1>
 
       {/* Seção 1: Minha Conta */}
-      <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
+      <div className="card-theme p-8 mb-8 animate-fade-in-up card-header-accent">
         <h3 className="text-xl font-semibold text-gray-800 mb-2">
           Minha Conta
         </h3>
@@ -101,7 +101,7 @@ function Settings() {
       </div>
 
       {/* Seção 2: Minhas Metas */}
-      <div className="bg-white p-8 rounded-lg border border-gray-200 mb-8">
+      <div className="card-theme p-8 mb-8 animate-fade-in-up card-header-accent">
         <h3 className="text-xl font-semibold text-gray-800 mb-2">
           Minhas Metas
         </h3>
@@ -144,8 +144,8 @@ function Settings() {
 
       {/* Modal de Edição de Perfil */}
       {showEditProfile && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <div className="fixed inset-0 flex items-center justify-center z-50 p-4 modal-overlay bg-black bg-opacity-50">
+          <div className="card-soft p-8 shadow-lg max-w-md w-full animate-scale-in">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Editar Perfil
             </h3>
@@ -229,7 +229,7 @@ function Settings() {
 
       <button
         onClick={handleLogout}
-        className="flex items-center gap-3 px-5 py-3 rounded-lg font-bold text-red-600 bg-red-100 hover:bg-red-200 transition-colors"
+        className="btn-logout active:scale-[.98]"
       >
         {/* <LogOut size={20} /> */}
         <span>Sair da Conta</span>

@@ -58,9 +58,9 @@ function SignUp() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen bg-app bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Cabeçalho */}
-      <header className="flex justify-between items-center p-6 md:p-10">
+      <header className="flex justify-between items-center p-6 md:p-10 animate-fade-in-up">
         <span className="text-2xl font-bold text-cyan-600">Habitus</span>
         <a
           href="/login"
@@ -73,7 +73,7 @@ function SignUp() {
 
       {/* Conteúdo Principal */}
       <main className="flex-grow flex items-center justify-center p-4">
-        <div className="bg-white p-8 md:p-10 rounded-lg shadow-sm max-w-md w-full text-center">
+        <div className="card-soft p-8 md:p-10 max-w-md w-full text-center animate-scale-in">
           <h2 className="text-3xl font-semibold text-gray-800 mb-2">
             Cadastre-se para o Habitus
           </h2>
@@ -148,9 +148,9 @@ function SignUp() {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full ${
-                loading ? 'bg-cyan-400' : 'bg-cyan-600 hover:bg-cyan-700'
-              } text-white py-3 rounded-md font-bold transition duration-200`}
+              className={`btn-primary w-full py-3 ${
+                loading ? 'opacity-70' : ''
+              }`}
             >
               {loading ? 'Criando...' : 'Criar Conta'}
             </button>
@@ -169,7 +169,7 @@ function SignUp() {
       </main>
 
       {/* Rodapé */}
-      <footer className="text-center p-6 text-sm text-gray-500">
+      <footer className="text-center p-6 text-sm text-gray-500 animate-fade-in-up">
         <p>© 2025. Habitus. Todos os direitos reservados.</p>
       </footer>
     </div>

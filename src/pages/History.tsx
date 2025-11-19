@@ -17,52 +17,35 @@ function History() {
     fetchUsers();
   }, []);
 
-  // Function for tab classes
+  // Tab styling using new theme classes
   const getTabClass = (tabName: Goal) => {
-    const baseClass = 'px-5 py-2 rounded-full font-medium transition-colors';
-    if (tabName === activeTab) {
-      return `${baseClass} bg-cyan-100 text-cyan-700 border border-cyan-200`;
-    }
-    return `${baseClass} bg-gray-100 text-gray-600 hover:bg-gray-200`;
+    const base = 'btn-outline-tab';
+    const active = 'btn-outline-tab-active';
+    return tabName === activeTab ? `${base} ${active}` : base;
   };
 
   return (
     <MainLayout activePage="progress">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6">
+      <h1 className="text-3xl font-semibold text-gray-800 mb-6 animate-fade-in-up">
         Histórico de Registros
       </h1>
 
       {/* Filtro de Abas */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
+      <div className="card-theme p-6 mb-8 animate-fade-in-up card-header-accent">
         <strong className="block text-sm font-medium text-gray-700 mb-3">
           Selecionar Objetivo
         </strong>
-        <div className="flex space-x-3">
-          <button
-            onClick={() => setActiveTab('Sleep')}
-            className={getTabClass('Sleep')}
-          >
-            Sono
-          </button>
-          <button
-            onClick={() => setActiveTab('Water')}
-            className={getTabClass('Water')}
-          >
-            Água
-          </button>
-          <button
-            onClick={() => setActiveTab('PhysicalActivity')}
-            className={getTabClass('PhysicalActivity')}
-          >
-            Atividade Física
-          </button>
+        <div className="flex flex-wrap gap-3">
+          <button onClick={() => setActiveTab('Sleep')} className={getTabClass('Sleep')}>Sono</button>
+          <button onClick={() => setActiveTab('Water')} className={getTabClass('Water')}>Água</button>
+          <button onClick={() => setActiveTab('PhysicalActivity')} className={getTabClass('PhysicalActivity')}>Atividade Física</button>
         </div>
       </div>
 
       {/* Grid de Conteúdo */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Card 1: Visão Geral (ocupa 1 coluna em telas grandes) */}
-        <div className="bg-white p-8 rounded-lg border border-gray-200 lg:col-span-1">
+        <div className="card-theme p-8 lg:col-span-1 animate-fade-in-up card-header-accent">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             Visão Geral do {activeTab}
           </h3>
@@ -82,14 +65,14 @@ function History() {
         </div>
 
         {/* Card 2: Gráfico (ocupa 2 colunas em telas grandes) */}
-        <div className="bg-white p-8 rounded-lg border border-gray-200 lg:col-span-2">
+        <div className="card-theme p-8 lg:col-span-2 animate-fade-in-up card-header-accent">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             Histórico de {activeTab} dos Últimos 7 Dias
           </h3>
           <p className="text-gray-600 text-sm mb-6">
             Comparação da meta com o sono registrado.
           </p>
-          <div className="h-72 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+          <div className="h-72 bg-gray-50 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 animate-fade-in-up">
             <p className="text-gray-500">📊 (Componente de Gráfico)</p>
           </div>
         </div>
