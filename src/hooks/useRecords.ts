@@ -1,18 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../services/api';
 
-// Define o formato dos dados que vêm do backend
 export interface RecordData {
   id: number;
   value: number;
   date: string;
   userHabit?: {
-    id: number; // Adicionado para editar o vínculo
+    id: number;
+    
+    measurementUnit?: {
+      id: number;
+      symbol: string;
+      name?: string;
+    };
+
     habit?: {
-      id: number; // Adicionado para selecionar o hábito no select
+      id: number;
       name: string;
-      measurementUnit?: {
-        id: number; // <--- AQUI ESTÁ A CORREÇÃO DO ERRO
+      measurementUnit?: { 
+        id: number;
         symbol: string;
         name?: string;
       };

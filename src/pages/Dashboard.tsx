@@ -6,11 +6,10 @@ import {
   useCreateRecord,
   useAuth,
   useRecords,
-  useRecordActions, // <--- IMPORTAR O NOVO HOOK
+  useRecordActions, 
 } from '../hooks';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
 import type { MeasurementUnit } from '../models/measurementUnit';
-// Importe o tipo RecordData para usar na função handleEdit
 import type { RecordData } from '../hooks/useRecords'; 
 
 function Dashboard() {
@@ -21,23 +20,19 @@ function Dashboard() {
   const { records, loading: recordsLoading, fetchRecords } = useRecords();
   const { getUser } = useAuth();
   
-  // Novo Hook de Ações
   const { deleteRecord, updateRecord, loading: processingAction } = useRecordActions();
 
-  // Estados do Formulário
   const [selectedHabitId, setSelectedHabitId] = useState<number | ''>('');
   const [quantity, setQuantity] = useState<string>('');
   const [selectedUnitId, setSelectedUnitId] = useState<number | ''>('');
   const [date, setDate] = useState<string>('');
   const [formError, setFormError] = useState<string | null>(null);
   
-  // Estado de Edição (se tiver ID aqui, estamos editando)
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingUserHabitId, setEditingUserHabitId] = useState<number | null>(null);
 
   const selectedHabit = habits.find((h) => h.id === selectedHabitId);
 
-  // --- Funções Auxiliares (Mantidas iguais) ---
   function formatDateToOffset(dateStr: string): string {
     const parts = dateStr.split('-').map((p) => Number(p));
     if (parts.length !== 3 || parts.some((n) => Number.isNaN(n) || n <= 0)) return dateStr;
@@ -68,7 +63,6 @@ function Dashboard() {
     baseUnitId
   );
 
-  // Filtro de Unidades
   function filterUnitsForHabit(unitsList: MeasurementUnit[], baseId?: number): MeasurementUnit[] {
     if (!baseId) return unitsList;
     if (baseId === MeasurementUnitsEnum.Ml || baseId === MeasurementUnitsEnum.L) {
@@ -82,10 +76,9 @@ function Dashboard() {
 
   const allowedUnits = filterUnitsForHabit(units, baseUnitId);
 
-  // Effect para selecionar unidade padrão
   useEffect(() => {
     if (!selectedHabitId) {
-      if (!editingId) setSelectedUnitId(''); // Só limpa se não estiver editando
+      if (!editingId) setSelectedUnitId(''); 
       return;
     }
     if (unitsLoading) return;
@@ -93,7 +86,6 @@ function Dashboard() {
     const currentAllowed = filterUnitsForHabit(units, baseUnitId);
     if (!currentAllowed.length) return;
 
-    // Se já tem uma unidade selecionada válida, mantém (importante para edição)
     if (typeof selectedUnitId === 'number' && currentAllowed.some((u) => u.id === selectedUnitId)) {
       return;
     }
@@ -104,9 +96,6 @@ function Dashboard() {
       setSelectedUnitId(currentAllowed[0].id);
     }
   }, [selectedHabitId, baseUnitId, units, unitsLoading, selectedUnitId, editingId]);
-
-
-  // --- AÇÕES DO USUÁRIO ---
 
   const handleCancelEdit = () => {
     setEditingId(null);
@@ -119,39 +108,27 @@ function Dashboard() {
   };
 
   const handleEditClick = (reg: RecordData) => {
-    // Preenche o formulário com os dados do registro
     setEditingId(reg.id);
     
-    // Precisamos do ID do vínculo (userHabitId) para mandar no PUT
-    // O Backend precisa mandar esse campo no JSON. Se estiver null, vai dar erro.
-    // Supondo que o seu Record.java tem "userHabitId".
-    // Se o 'reg' não tiver userHabitId direto, talvez esteja dentro do objeto userHabit.
-    // Ajuste conforme o seu JSON de retorno. Vamos tentar pegar do objeto aninhado ou direto.
+
     const uhId = (reg as any).userHabitId || reg.userHabit?.id;
     setEditingUserHabitId(uhId);
 
-    // Preenche campos
     if (reg.userHabit?.habit?.id) {
         setSelectedHabitId(reg.userHabit.habit.id);
     }
     
-    // Valor e Unidade: O backend guarda o valor normalizado (ex: 2000 ml).
-    // Se quisermos exibir "2 Litros", precisaríamos de lógica reversa.
-    // Por simplicidade, vamos exibir o valor base (2000) e a unidade base (ml) inicialmente.
     setQuantity(String(reg.value));
     
-    // Tenta pegar a unidade base do hábito
     if (reg.userHabit?.habit?.measurementUnit?.id) {
-        setSelectedUnitId(reg.userHabit.habit.measurementUnit.id); // Unidade salva no banco (base)
+        setSelectedUnitId(reg.userHabit.habit.measurementUnit.id); 
     }
 
-    // Data (yyyy-mm-dd)
     if (reg.date) {
         const justDate = reg.date.split('T')[0];
         setDate(justDate);
     }
 
-    // Rola a página para cima para ver o formulário
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -159,7 +136,7 @@ function Dashboard() {
     if (window.confirm('Tem certeza que deseja excluir este registro?')) {
         try {
             await deleteRecord(id);
-            await fetchRecords(); // Atualiza lista
+            await fetchRecords(); 
         } catch (err) {
             alert('Erro ao excluir.');
         }
@@ -179,7 +156,6 @@ function Dashboard() {
 
     try {
         if (editingId) {
-            // MODO EDIÇÃO
             if (!editingUserHabitId) {
                 setFormError('Erro interno: ID do hábito do usuário não encontrado.');
                 return;
@@ -193,7 +169,7 @@ function Dashboard() {
                 date: formattedDate
             });
             alert('Registro atualizado!');
-            handleCancelEdit(); // Limpa e sai do modo edição
+            handleCancelEdit(); 
         } else {
             // MODO CRIAÇÃO
             await createRecord({
@@ -205,10 +181,9 @@ function Dashboard() {
                 date: formattedDate,
             });
             setQuantity('');
-            // setDate(''); // Opcional: manter a data facilita múltiplos registros
         }
         
-        await fetchRecords(); // Atualiza a tabela
+        await fetchRecords();
     } catch (err) {
         setFormError('Erro ao salvar.');
     }
@@ -240,7 +215,7 @@ function Dashboard() {
               className="input-theme"
               value={selectedHabitId}
               onChange={(e) => setSelectedHabitId(e.target.value ? Number(e.target.value) : '')}
-              disabled={!!editingId} // Bloqueia mudar o hábito durante edição para evitar inconsistência
+              disabled={!!editingId} 
             >
               <option value="">Selecione um hábito</option>
               {habits.map((habit) => (
@@ -326,7 +301,7 @@ function Dashboard() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{reg.value}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {reg.userHabit?.habit?.measurementUnit?.symbol || '-'}
+                        {reg.userHabit?.measurementUnit?.symbol || reg.userHabit?.habit?.measurementUnit?.symbol || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{formatDateDisplay(reg.date)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
