@@ -7,10 +7,14 @@ export interface RecordData {
   value: number;
   date: string;
   userHabit?: {
+    id: number; // Adicionado para editar o vínculo
     habit?: {
+      id: number; // Adicionado para selecionar o hábito no select
       name: string;
       measurementUnit?: {
+        id: number; // <--- AQUI ESTÁ A CORREÇÃO DO ERRO
         symbol: string;
+        name?: string;
       };
     };
   };
