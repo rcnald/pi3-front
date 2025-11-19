@@ -16,3 +16,9 @@ declare global {
 }
 
 export {};
+
+export enum Habits {
+  Water = 1,
+  Sleep = 2,
+  PhysicalActivity = 3,
+}
