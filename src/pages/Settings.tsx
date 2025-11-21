@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import MainLayout from '../components/MainLayout';
-import GoalModal, { type GoalType, type GoalValue } from '../components/GoalModal';
+import GoalModal, {
+  type GoalType,
+  type GoalValue,
+} from '../components/GoalModal';
+import { ProfileModal } from '../components/ProfileModal';
 import { useAuth } from '../hooks/useAuth';
 import { useHabits } from '../hooks';
 // import { User, Bell, Moon, Droplet, Activity, ChevronRight, LogOut } from 'lucide-react'; // Exemplo de ícones
@@ -22,7 +26,9 @@ function Settings() {
   const [activeGoalType, setActiveGoalType] = useState<GoalType | null>(null);
   const [goalModalError, setGoalModalError] = useState<string | null>(null);
   const [goalModalLoading, setGoalModalLoading] = useState(false);
-  const [currentGoals, setCurrentGoals] = useState<Record<GoalType, GoalValue | null>>({
+  const [currentGoals, setCurrentGoals] = useState<
+    Record<GoalType, GoalValue | null>
+  >({
     sleep: null,
     water: null,
     activity: null,
@@ -32,7 +38,7 @@ function Settings() {
     setSuccess('Logout realizado com sucesso.');
     try {
       localStorage.removeItem('token');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       // ignore
     }
@@ -122,7 +128,7 @@ function Settings() {
     };
 
     const habitId = habitIds[activeGoalType];
-    const habit = habits.find(h => h.id === habitId);
+    const habit = habits.find((h) => h.id === habitId);
     if (!habit) {
       setGoalModalError('Hábito não encontrado.');
       return;
@@ -144,14 +150,18 @@ function Settings() {
       await api.post('/user-habits', payload);
 
       setCurrentGoals((prev) => ({ ...prev, [activeGoalType]: goal }));
-      setSuccess(`Meta de ${goalTypeLabels[activeGoalType]} salva com sucesso!`);
+      setSuccess(
+        `Meta de ${goalTypeLabels[activeGoalType]} salva com sucesso!`
+      );
       closeGoalModal();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: unknown) {
       const error = err as { message?: string; response?: { status: number } };
-      
+
       if (error?.response?.status === 401 || error?.response?.status === 403) {
-        setGoalModalError('Sessão expirada ou sem permissão. Faça login novamente.');
+        setGoalModalError(
+          'Sessão expirada ou sem permissão. Faça login novamente.'
+        );
       } else {
         setGoalModalError(
           error?.message ?? 'Erro ao salvar meta. Tente novamente.'
@@ -174,11 +184,15 @@ function Settings() {
           Minha Conta
         </h3>
         <p className="text-gray-600 text-sm mb-6">
-          Gerencie suas informações de perfil e notificações.
+          Gerencie suas informações de perfil.
         </p>
         <ul className="divide-y divide-gray-200">
           <li
-            onClick={() => setShowEditProfile(true)}
+            onClick={() => {
+              const user = getUser();
+              if (user?.name) setEditName(user.name);
+              setShowEditProfile(true);
+            }}
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
           >
             <div className="flex items-center gap-4">
@@ -186,13 +200,6 @@ function Settings() {
               <span className="font-medium text-gray-700">Meu perfil</span>
             </div>
             {/* <ChevronRight className="text-gray-400" /> */}
-            <span>&gt;</span>
-          </li>
-          <li className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer">
-            <div className="flex items-center gap-4">
-              {/* <Bell className="text-gray-500" /> */}
-              <span className="font-medium text-gray-700">Notificações</span>
-            </div>
             <span>&gt;</span>
           </li>
         </ul>
@@ -261,90 +268,25 @@ function Settings() {
         />
       )}
 
-      {/* Modal de Edição de Perfil */}
-      {showEditProfile && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 p-4 modal-overlay bg-black bg-opacity-50">
-          <div className="card-soft p-8 shadow-lg max-w-md w-full animate-scale-in">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Editar Perfil
-            </h3>
-
-            {editError && (
-              <div className="text-sm text-red-600 mb-4" role="alert">
-                {editError}
-              </div>
-            )}
-
-            <form onSubmit={handleEditProfile} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Novo Nome (opcional)
-                </label>
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  placeholder="Deixe em branco para não alterar"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha Antiga (se for alterar senha)
-                </label>
-                <input
-                  type="password"
-                  value={editOldPassword}
-                  onChange={(e) => setEditOldPassword(e.target.value)}
-                  placeholder="Deixe em branco se não for alterar"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Senha Nova (se for alterar senha)
-                </label>
-                <input
-                  type="password"
-                  value={editNewPassword}
-                  onChange={(e) => setEditNewPassword(e.target.value)}
-                  placeholder="Deixe em branco se não for alterar"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="submit"
-                  disabled={editLoading}
-                  className={`flex-1 py-2 rounded-md font-bold text-white ${
-                    editLoading
-                      ? 'bg-cyan-400'
-                      : 'bg-cyan-600 hover:bg-cyan-700'
-                  } transition`}
-                >
-                  {editLoading ? 'Salvando...' : 'Salvar'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowEditProfile(false);
-                    setEditError(null);
-                    setEditName('');
-                    setEditOldPassword('');
-                    setEditNewPassword('');
-                  }}
-                  className="flex-1 py-2 rounded-md font-bold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ProfileModal
+        isOpen={showEditProfile}
+        editName={editName}
+        editOldPassword={editOldPassword}
+        editNewPassword={editNewPassword}
+        editError={editError}
+        editLoading={editLoading}
+        onNameChange={setEditName}
+        onOldPasswordChange={setEditOldPassword}
+        onNewPasswordChange={setEditNewPassword}
+        onSubmit={handleEditProfile}
+        onClose={() => {
+          setShowEditProfile(false);
+          setEditError(null);
+          setEditName('');
+          setEditOldPassword('');
+          setEditNewPassword('');
+        }}
+      />
 
       <button onClick={handleLogout} className="btn-logout active:scale-[.98]">
         {/* <LogOut size={20} /> */}

@@ -67,6 +67,8 @@ export const useCreateRecord = (): UseCreateRecordReturn => {
         baseUnitId
       );
 
+      console.log('Creating record with normalized value:', normalizedValue, userId, habitId, date);
+
       await api.post('/records', {
         userId,
         habitId,

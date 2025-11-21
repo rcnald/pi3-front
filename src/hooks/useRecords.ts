@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { api } from '../services/api';
 
 export interface RecordData {
@@ -7,7 +7,7 @@ export interface RecordData {
   date: string;
   userHabit?: {
     id: number;
-    
+
     measurementUnit?: {
       id: number;
       symbol: string;
@@ -17,7 +17,7 @@ export interface RecordData {
     habit?: {
       id: number;
       name: string;
-      measurementUnit?: { 
+      measurementUnit?: {
         id: number;
         symbol: string;
         name?: string;
@@ -31,10 +31,13 @@ export function useRecords() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchRecords = useCallback(async () => {
+  const fetchRecords = useCallback(async (userId: number, date?: string) => {
     setLoading(true);
     try {
-      const response = await api.get('/records');
+      const url = date
+        ? `/records/user/${userId}?date=${date}`
+        : `/records/user/${userId}`;
+      const response = await api.get(url);
       setRecords(response.data);
       setError(null);
     } catch (err) {
@@ -44,11 +47,6 @@ export function useRecords() {
       setLoading(false);
     }
   }, []);
-
-  // Carrega automaticamente ao abrir a tela
-  useEffect(() => {
-    fetchRecords();
-  }, [fetchRecords]);
 
   return { records, loading, error, fetchRecords };
 }
