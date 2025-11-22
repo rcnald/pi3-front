@@ -68,12 +68,75 @@ function History() {
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   };
 
+  // Calcula a porcentagem da meta atingida
+  const calculateGoalPercentage = (total: number, meta: number): number => {
+    if (meta === 0) return 0;
+    return (total / meta) * 100;
+  };
+
+  // Retorna a cor baseada na porcentagem da meta
+  const getGoalColor = (percentage: number, hasMeta: boolean, hasTotal: boolean): string => {
+    if (!hasMeta && !hasTotal) return 'text-gray-400'; // Sem meta e sem registro
+    if (!hasMeta && hasTotal) return 'text-blue-600'; // Progresso livre (sem meta definida)
+    if (percentage >= 100) return 'text-green-600'; // Meta batida
+    if (percentage >= 70) return 'text-orange-500'; // Próximo da meta
+    return 'text-red-600'; // Longe da meta
+  };
+
+  const getGoalBgColor = (percentage: number, hasMeta: boolean, hasTotal: boolean): string => {
+    if (!hasMeta && !hasTotal) return 'bg-gray-50 border-gray-200';
+    if (!hasMeta && hasTotal) return 'bg-blue-50 border-blue-200';
+    if (percentage >= 100) return 'bg-green-50 border-green-200';
+    if (percentage >= 70) return 'bg-orange-50 border-orange-200';
+    return 'bg-red-50 border-red-200';
+  };
+
+  const getGoalStatus = (percentage: number, hasMeta: boolean, hasTotal: boolean): string => {
+    if (!hasMeta && !hasTotal) return '- Sem registro';
+    if (!hasMeta && hasTotal) return '✓ Progresso livre';
+    if (percentage >= 100) return '✓ Meta Batida';
+    if (percentage >= 70) return '~ Quase lá';
+    return '✗ Abaixo da meta';
+  };
+
   // Formata os dados para o gráfico
-  const chartData = history?.grafico.map((item) => ({
-    data: formatDate(item.data),
+  const chartData = history?.chart.map((item) => ({
+    data: formatDate(item.date),
     Total: item.total,
-    Meta: history.metaInfo.metaDiaria,
+    Meta: item.dailyGoal,
+    dataCompleta: item.date,
   })) || [];
+
+  // Calcula estatísticas de meta
+  const goalStats = history?.chart.reduce(
+    (acc, item) => {
+      const hasMeta = item.dailyGoal > 0;
+      const hasTotal = item.total > 0;
+      
+      if (!hasMeta && !hasTotal) {
+        acc.noRecord++;
+        return acc;
+      }
+      
+      if (!hasMeta && hasTotal) {
+        acc.freeProgress++;
+        return acc;
+      }
+      
+      const percentage = calculateGoalPercentage(item.total, item.dailyGoal);
+      if (percentage >= 100) acc.achieved++;
+      else if (percentage >= 70) acc.close++;
+      else acc.below++;
+      return acc;
+    },
+    { achieved: 0, close: 0, below: 0, freeProgress: 0, noRecord: 0 }
+  ) || { achieved: 0, close: 0, below: 0, freeProgress: 0, noRecord: 0 };
+
+  const totalDaysWithGoal = (history?.chart.filter(item => item.dailyGoal > 0).length) || 0;
+  const achievementRate = totalDaysWithGoal > 0 ? (goalStats.achieved / totalDaysWithGoal) * 100 : 0;
+  
+  // Total de dias avaliados (com meta)
+  const totalEvaluatedDays = goalStats.achieved + goalStats.close + goalStats.below;
 
   return (
     <MainLayout activePage="progress">
@@ -114,6 +177,56 @@ function History() {
           <p className="text-gray-500 text-lg">Carregando histórico...</p>
         </div>
       ) : history && selectedHabit ? (
+        <>
+        {/* Card de Estatísticas de Meta */}
+        <div className="card-theme p-6 mb-6 animate-fade-in-up card-header-accent">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            Taxa de Conquista da Meta
+          </h3>
+          <div className="grid grid-cols-5 gap-2 mb-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">{goalStats.achieved}</div>
+              <div className="text-xs text-gray-600">✓ Batidas</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-500">{goalStats.close}</div>
+              <div className="text-xs text-gray-600">~ Próximo</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-red-600">{goalStats.below}</div>
+              <div className="text-xs text-gray-600">✗ Abaixo</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{goalStats.freeProgress}</div>
+              <div className="text-xs text-gray-600">✓ Livre</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-gray-400">{goalStats.noRecord}</div>
+              <div className="text-xs text-gray-600">- Vazio</div>
+            </div>
+          </div>
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Taxa de Sucesso</span>
+              <strong className={`text-2xl ${getGoalColor(achievementRate, totalDaysWithGoal > 0, true)}`}>
+                {totalDaysWithGoal > 0 ? `${achievementRate.toFixed(0)}%` : 'N/A'}
+              </strong>
+            </div>
+            {totalEvaluatedDays > 0 && (
+              <p className="text-xs text-gray-500 mt-2">
+                {goalStats.achieved} de {totalEvaluatedDays} dias com meta cumprida
+              </p>
+            )}
+            {(goalStats.freeProgress > 0 || goalStats.noRecord > 0) && (
+              <p className="text-xs text-gray-400 mt-1">
+                {goalStats.freeProgress > 0 && `${goalStats.freeProgress} livre`}
+                {goalStats.freeProgress > 0 && goalStats.noRecord > 0 && ' • '}
+                {goalStats.noRecord > 0 && `${goalStats.noRecord} vazio`}
+              </p>
+            )}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Card 1: Visão Geral */}
           <div className="card-theme p-8 lg:col-span-1 animate-fade-in-up card-header-accent">
@@ -121,26 +234,64 @@ function History() {
               Visão Geral
             </h3>
             <p className="text-gray-600 text-sm mb-6">
-              Métricas de desempenho de {history.metaInfo.nome}.
+              Métricas de desempenho de {history.info.name}.
             </p>
             <div className="space-y-5">
               <div className="flex justify-between items-center py-4 border-b border-gray-100">
                 <span className="text-gray-600">Média Semanal</span>
                 <strong className="text-2xl text-gray-800">
-                  {history.metricas.mediaSemanal.toFixed(2)} {history.metaInfo.unidade}
+                  {history.metrics.weeklyAverage.toFixed(2)} {history.info.unit}
                 </strong>
               </div>
               <div className="flex justify-between items-center py-4 border-b border-gray-100">
                 <span className="text-gray-600">Melhor Registro</span>
                 <strong className="text-2xl text-gray-800">
-                  {history.metricas.melhorRegistro.toFixed(2)} {history.metaInfo.unidade}
+                  {history.metrics.bestRecord.toFixed(2)} {history.info.unit}
                 </strong>
               </div>
               <div className="flex justify-between items-center py-4">
-                <span className="text-gray-600">Meta Diária</span>
+                <span className="text-gray-600">Meta Diária Atual</span>
                 <strong className="text-2xl text-gray-800">
-                  {history.metaInfo.metaDiaria.toFixed(2)} {history.metaInfo.unidade}
+                  {history.info.dailyGoal.toFixed(2)} {history.info.unit}
                 </strong>
+              </div>
+            </div>
+
+            {/* Lista de Dias com Status */}
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-semibold text-gray-700 mb-3">Status por Dia</h4>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {history.chart.map((item) => {
+                  const hasMeta = item.dailyGoal > 0;
+                  const hasTotal = item.total > 0;
+                  const percentage = calculateGoalPercentage(item.total, item.dailyGoal);
+                  return (
+                    <div
+                      key={item.date}
+                      className={`p-3 rounded-lg border ${getGoalBgColor(percentage, hasMeta, hasTotal)}`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-medium text-gray-700">
+                          {formatDate(item.date)}
+                        </span>
+                        <span className={`text-xs font-semibold ${getGoalColor(percentage, hasMeta, hasTotal)}`}>
+                          {getGoalStatus(percentage, hasMeta, hasTotal)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-xs text-gray-600">
+                          {hasTotal ? `${item.total.toFixed(0)} ${history.info.unit}` : 'Sem registro'}
+                          {hasMeta && hasTotal && ` / ${item.dailyGoal.toFixed(0)}`}
+                        </span>
+                        {hasMeta && hasTotal && (
+                          <span className={`text-xs font-bold ${getGoalColor(percentage, hasMeta, hasTotal)}`}>
+                            {percentage.toFixed(0)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -151,7 +302,7 @@ function History() {
               Histórico dos Últimos 7 Dias
             </h3>
             <p className="text-gray-600 text-sm mb-6">
-              Comparação da meta com os registros de {history.metaInfo.nome}.
+              Comparação da meta com os registros de {history.info.name}.
             </p>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
@@ -165,7 +316,7 @@ function History() {
                   stroke="#6b7280"
                   style={{ fontSize: '12px' }}
                   label={{ 
-                    value: history.metaInfo.unidade, 
+                    value: history.info.unit, 
                     angle: -90, 
                     position: 'insideLeft',
                     style: { fontSize: '12px', fill: '#6b7280' }
@@ -187,7 +338,7 @@ function History() {
                   strokeWidth={2}
                   dot={{ r: 4 }}
                   activeDot={{ r: 6 }}
-                  name={`Total (${history.metaInfo.unidade})`}
+                  name={`Total (${history.info.unit})`}
                 />
                 <Line 
                   type="monotone" 
@@ -196,12 +347,13 @@ function History() {
                   strokeWidth={2}
                   strokeDasharray="5 5"
                   dot={{ r: 4 }}
-                  name={`Meta (${history.metaInfo.unidade})`}
+                  name={`Meta (${history.info.unit})`}
                 />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </div>
+        </>
       ) : (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">

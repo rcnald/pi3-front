@@ -1,23 +1,24 @@
-export interface HistoryMetaInfo {
-  nome: string;
-  unidade: string;
-  metaDiaria: number;
+export interface HistoryInfo {
+  name: string;
+  unit: string;
+  dailyGoal: number;
 }
 
 export interface HistoryMetrics {
-  mediaSemanal: number;
-  melhorRegistro: number;
+  weeklyAverage: number;
+  bestRecord: number;
 }
 
-export interface HistoryGraphData {
-  data: string;
+export interface HistoryChartData {
+  date: string;
   total: number;
+  dailyGoal: number;
 }
 
 export interface HistoryResponse {
-  metaInfo: HistoryMetaInfo;
-  metricas: HistoryMetrics;
-  grafico: HistoryGraphData[];
+  info: HistoryInfo;
+  metrics: HistoryMetrics;
+  chart: HistoryChartData[];
 }
 
 export interface HistoryParams {
