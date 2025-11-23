@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { api } from '../services/api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function SignUp() {
   const [name, setName] = useState('');
@@ -9,6 +9,7 @@ function SignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [createdUser, setCreatedUser] = useState<CreatedUser | null>(null);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,18 +37,20 @@ function SignUp() {
       setEmail('');
       setPassword('');
       setError(null);
+      navigate('/login');
     } catch (err: unknown) {
       const error = err as {
-        response?: { status: number; data?: { erro?: string } };
+        response?: {
+          status: number;
+          data?: { erro?: string; message?: string };
+        };
         message?: string;
       };
       if (error?.response?.status === 400) {
         setError(error.response.data?.erro ?? 'Requisição inválida.');
       } else {
         if (import.meta.env.DEV) {
-          setError(
-            `Erro ao cadastrar: ${error?.message ?? 'Erro desconhecido'}`
-          );
+          setError(`${error?.response?.data?.message ?? 'Erro desconhecido'}`);
         } else {
           setError('Erro inesperado. Tente novamente mais tarde.');
         }
