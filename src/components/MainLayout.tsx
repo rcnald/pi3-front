@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { User, LogOut } from 'lucide-react';
 
 const navItems = [
-  { id: 'goals', name: 'Objetivos', path: '/' },
+  { id: 'goals', name: 'Atividades', path: '/' },
   { id: 'progress', name: 'Progresso', path: '/history' },
   { id: 'settings', name: 'Configurações', path: '/settings' },
 ];

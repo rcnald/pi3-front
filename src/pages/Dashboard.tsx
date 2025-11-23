@@ -224,7 +224,7 @@ function Dashboard() {
           baseUnitId: baseUnitId!,
           date: formattedDate,
         });
-        setFormSuccess('✓ Objetivo registrado com sucesso!');
+        setFormSuccess('✓ Atividade registrada com sucesso!');
         setQuantity('');
       }
 
@@ -243,7 +243,7 @@ function Dashboard() {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-gray-800">
-            {editingId ? '✏️ Editando Objetivo' : 'Registrar Novo Objetivo'}
+            {editingId ? '✏️ Editando Atividade' : 'Registrar Nova Atividade'}
           </h2>
           {editingId && (
             <button
@@ -258,7 +258,7 @@ function Dashboard() {
         <form className="space-y-5" onSubmit={onSubmit}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Objetivo
+              Atividade
             </label>
             <select
               className="input-theme"
@@ -336,7 +336,7 @@ function Dashboard() {
               ? 'Salvando...'
               : editingId
               ? 'Salvar Alterações'
-              : 'Registrar Objetivo'}
+              : 'Registrar Atividade'}
           </button>
 
           {formError && (
@@ -381,7 +381,7 @@ function Dashboard() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Objetivo
+                  Atividade
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Qtd
