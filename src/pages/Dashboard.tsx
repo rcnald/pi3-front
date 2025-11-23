@@ -292,7 +292,7 @@ function Dashboard() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Unidade
+                {selectedHabitId ? 'Unidade de medida' : 'Unidade (selecione um hábito antes)'}
               </label>
               <select
                 className="input-theme"
@@ -304,7 +304,7 @@ function Dashboard() {
                 }
                 disabled={!selectedHabitId}
               >
-                <option value="">Selecione</option>
+                <option value="">Selecione uma unidade</option>
                 {allowedUnits.map((u) => (
                   <option key={u.id} value={u.id}>
                     {u.name} ({u.symbol})

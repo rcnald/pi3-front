@@ -106,11 +106,7 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
               aria-haspopup="menu"
               aria-expanded={isMenuOpen}
             >
-              <img
-                src="https://i.pravatar.cc/40"
-                alt="Avatar"
-                className="w-9 h-9 rounded-full"
-              />
+              <User className="text-gray-500" size={20} />
             </button>
 
             {isMenuOpen && (

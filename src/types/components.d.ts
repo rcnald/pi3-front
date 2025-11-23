@@ -1,4 +1,3 @@
-// React component related types
 declare global {
   interface ProtectedRouteProps {
     children: React.ReactNode;

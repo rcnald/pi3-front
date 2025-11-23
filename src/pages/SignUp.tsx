@@ -15,7 +15,6 @@ function SignUp() {
     e.preventDefault();
     setError(null);
 
-    // Client-side validation
     if (!name.trim() || !email.trim() || !password) {
       setError('Por favor, preencha todos os campos.');
       return;
@@ -62,7 +61,6 @@ function SignUp() {
 
   return (
     <div className="flex flex-col min-h-screen bg-app bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Cabeçalho */}
       <header className="flex justify-between items-center p-6 md:p-10 animate-fade-in-up">
         <span className="text-2xl font-bold text-cyan-600">Habitus</span>
         <a
@@ -71,10 +69,8 @@ function SignUp() {
         >
           Entrar
         </a>
-        {/* <Link to="/login" className="font-medium text-gray-700 hover:text-cyan-600">Entrar</Link> */}
       </header>
 
-      {/* Conteúdo Principal */}
       <main className="flex-grow flex items-center justify-center p-4">
         <div className="card-soft p-8 md:p-10 max-w-md w-full text-center animate-scale-in">
           <h2 className="text-3xl font-semibold text-gray-800 mb-2">
@@ -171,7 +167,6 @@ function SignUp() {
         </div>
       </main>
 
-      {/* Rodapé */}
       <footer className="text-center p-6 text-sm text-gray-500 animate-fade-in-up">
         <p>© 2025. Habitus. Todos os direitos reservados.</p>
       </footer>

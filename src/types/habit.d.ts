@@ -1,4 +1,3 @@
-// Habit related types
 declare global {
   type Unit = {
     id: number;

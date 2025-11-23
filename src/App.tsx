@@ -33,7 +33,6 @@ function App() {
         }
       />
 
-      {/* Redireciona qualquer rota desconhecida para login */}
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

@@ -2,13 +2,11 @@ import { useState } from 'react';
 import { api } from '../services/api';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
 
-// Reaproveitando a lógica de normalização
 function normalizeToBase(
   value: number,
   inputUnitId: number,
   baseUnitId: number
 ): number {
-  // Lógica de conversão (ml/L e min/h)
   if (
     (baseUnitId === MeasurementUnitsEnum.Ml ||
       baseUnitId === MeasurementUnitsEnum.L) &&
@@ -40,7 +38,7 @@ interface UpdateParams {
 
 export function useRecordActions() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
   const deleteRecord = async (id: number) => {
     setLoading(true);
@@ -64,14 +62,17 @@ export function useRecordActions() {
   }: UpdateParams) => {
     setLoading(true);
     try {
-      const normalizedValue = normalizeToBase(inputValue, inputUnitId, baseUnitId);
-      
-      // O Backend espera um objeto Record completo no PUT
+      const normalizedValue = normalizeToBase(
+        inputValue,
+        inputUnitId,
+        baseUnitId
+      );
+
       await api.put(`/records/${id}`, {
         id,
-        userHabitId, // Importante manter o vínculo
+        userHabitId, 
         value: normalizedValue,
-        date: new Date(date), // O Java espera o formato ISO ou similar
+        date: new Date(date), 
       });
     } catch (err) {
       console.error(err);

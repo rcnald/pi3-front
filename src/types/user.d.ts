@@ -1,4 +1,3 @@
-// User and authentication related types
 declare global {
   type User = {
     id: number;

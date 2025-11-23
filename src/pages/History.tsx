@@ -19,7 +19,6 @@ function History() {
   const [selectedHabit, setSelectedHabit] = useState<Habit | null>(null);
   const { history, loading: loadingHistory, error, refetch } = useHistory();
 
-  // Calcula as datas para os últimos 7 dias
   const getLast7Days = () => {
     const end = new Date();
     const start = new Date();
@@ -31,7 +30,6 @@ function History() {
     };
   };
 
-  // Busca o histórico quando um hábito é selecionado
   useEffect(() => {
     const user = getUser();
     if (selectedHabit && user) {
@@ -48,39 +46,34 @@ function History() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedHabit]);
 
-  // Seleciona o primeiro hábito por padrão
   useEffect(() => {
     if (habits.length > 0 && !selectedHabit) {
       setSelectedHabit(habits[0]);
     }
   }, [habits, selectedHabit]);
 
-  // Tab styling
   const getTabClass = (habitId: number) => {
     const base = 'btn-outline-tab';
     const active = 'btn-outline-tab-active';
     return habitId === selectedHabit?.id ? `${base} ${active}` : base;
   };
 
-  // Formata a data para o eixo X
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr + 'T00:00:00');
     return date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
   };
 
-  // Calcula a porcentagem da meta atingida
   const calculateGoalPercentage = (total: number, meta: number): number => {
     if (meta === 0) return 0;
     return (total / meta) * 100;
   };
 
-  // Retorna a cor baseada na porcentagem da meta
   const getGoalColor = (percentage: number, hasMeta: boolean, hasTotal: boolean): string => {
-    if (!hasMeta && !hasTotal) return 'text-gray-400'; // Sem meta e sem registro
-    if (!hasMeta && hasTotal) return 'text-blue-600'; // Progresso livre (sem meta definida)
-    if (percentage >= 100) return 'text-green-600'; // Meta batida
-    if (percentage >= 70) return 'text-orange-500'; // Próximo da meta
-    return 'text-red-600'; // Longe da meta
+    if (!hasMeta && !hasTotal) return 'text-gray-400'; 
+    if (!hasMeta && hasTotal) return 'text-blue-600'; 
+    if (percentage >= 100) return 'text-green-600'; 
+    if (percentage >= 70) return 'text-orange-500'; 
+    return 'text-red-600'; 
   };
 
   const getGoalBgColor = (percentage: number, hasMeta: boolean, hasTotal: boolean): string => {
@@ -99,7 +92,6 @@ function History() {
     return '✗ Abaixo da meta';
   };
 
-  // Formata os dados para o gráfico
   const chartData = history?.chart.map((item) => ({
     data: formatDate(item.date),
     Total: item.total,
@@ -107,7 +99,6 @@ function History() {
     dataCompleta: item.date,
   })) || [];
 
-  // Calcula estatísticas de meta
   const goalStats = history?.chart.reduce(
     (acc, item) => {
       const hasMeta = item.dailyGoal > 0;
@@ -135,7 +126,6 @@ function History() {
   const totalDaysWithGoal = (history?.chart.filter(item => item.dailyGoal > 0).length) || 0;
   const achievementRate = totalDaysWithGoal > 0 ? (goalStats.achieved / totalDaysWithGoal) * 100 : 0;
   
-  // Total de dias avaliados (com meta)
   const totalEvaluatedDays = goalStats.achieved + goalStats.close + goalStats.below;
 
   return (
@@ -144,7 +134,6 @@ function History() {
         Histórico de Registros
       </h1>
 
-      {/* Filtro de Abas */}
       <div className="card-theme p-6 mb-8 animate-fade-in-up card-header-accent">
         <strong className="block text-sm font-medium text-gray-700 mb-3">
           Selecionar Hábito
@@ -178,7 +167,6 @@ function History() {
         </div>
       ) : history && selectedHabit ? (
         <>
-        {/* Card de Estatísticas de Meta */}
         <div className="card-theme p-6 mb-6 animate-fade-in-up card-header-accent">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">
             Taxa de Conquista da Meta
@@ -228,7 +216,6 @@ function History() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Card 1: Visão Geral */}
           <div className="card-theme p-8 lg:col-span-1 animate-fade-in-up card-header-accent">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Visão Geral
@@ -257,7 +244,6 @@ function History() {
               </div>
             </div>
 
-            {/* Lista de Dias com Status */}
             <div className="mt-6 pt-6 border-t border-gray-200">
               <h4 className="text-sm font-semibold text-gray-700 mb-3">Status por Dia</h4>
               <div className="space-y-2 max-h-60 overflow-y-auto">
@@ -296,7 +282,6 @@ function History() {
             </div>
           </div>
 
-          {/* Card 2: Gráfico */}
           <div className="card-theme p-8 lg:col-span-2 animate-fade-in-up card-header-accent">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Histórico dos Últimos 7 Dias

@@ -1,7 +1,3 @@
-/**
- * Converts a date string (YYYY-MM-DD) to ISO OffsetDateTime format
- * for backend compatibility with Java OffsetDateTime
- */
 export function formatDateToOffset(dateStr: string): string {
   const parts = dateStr.split('-').map((p) => Number(p));
   if (parts.length !== 3 || parts.some((n) => Number.isNaN(n) || n <= 0)) {
@@ -16,9 +12,6 @@ export function formatDateToOffset(dateStr: string): string {
   return `${dateStr}T00:00:00${sign}${hh}:${mm}`;
 }
 
-/**
- * Formats an ISO date string to Brazilian locale display (DD/MM/YYYY)
- */
 export function formatDateDisplay(dateString: string): string {
   if (!dateString) return '-';
   try {
@@ -28,10 +21,6 @@ export function formatDateDisplay(dateString: string): string {
   }
 }
 
-/**
- * Extracts the base measurement unit ID from a habit object
- * Handles different API response shapes
- */
 export function getBaseUnitIdFromHabit(habit: unknown): number | undefined {
   if (!habit || typeof habit !== 'object') return undefined;
   const h = habit as Record<string, unknown>;

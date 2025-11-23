@@ -129,7 +129,7 @@ const GoalModal = ({
     await onSave({ 
       value: newGoalValue, 
       unit: newGoalUnit,
-      goalMode: 'weekly', // Always weekly now as it combines both
+      goalMode: 'weekly',
       weeklyFrequency: weeklyFrequency,
     });
   };

@@ -10,7 +10,6 @@ import { ProfileModal } from '../components/ProfileModal';
 import { useAuth } from '../hooks/useAuth';
 import { useHabits } from '../hooks';
 import { Activity, Droplet, LogOut, Moon, User } from 'lucide-react';
-// import { User, Bell, Moon, Droplet, Activity, ChevronRight, LogOut } from 'lucide-react'; // Exemplo de ícones
 
 function Settings() {
   const navigate = useNavigate();
