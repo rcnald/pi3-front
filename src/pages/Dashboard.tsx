@@ -430,22 +430,26 @@ function Dashboard() {
                       {formatDateDisplay(reg.date)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                      <button
-                        onClick={() => handleEditClick(reg)}
-                        className="text-cyan-600 hover:text-cyan-800 disabled:opacity-30"
-                        disabled={processingAction}
-                        title="Editar"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(reg.id)}
-                        className="text-red-600 hover:text-red-800 disabled:opacity-30"
-                        disabled={processingAction}
-                        title="Excluir"
-                      >
-                        🗑️
-                      </button>
+                      {!editingId && (
+                        <>
+                          <button
+                            onClick={() => handleEditClick(reg)}
+                            className="text-cyan-600 hover:text-cyan-800 disabled:opacity-30"
+                            disabled={processingAction}
+                            title="Editar"
+                          >
+                            ✏️
+                          </button>
+                          <button
+                            onClick={() => handleDeleteClick(reg.id)}
+                            className="text-red-600 hover:text-red-800 disabled:opacity-30"
+                            disabled={processingAction}
+                            title="Excluir"
+                          >
+                            🗑️
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))
