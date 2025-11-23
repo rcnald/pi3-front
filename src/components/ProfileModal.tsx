@@ -1,11 +1,13 @@
 interface ProfileModalProps {
   isOpen: boolean;
   editName: string;
+  editEmail: string;
   editOldPassword: string;
   editNewPassword: string;
   editError: string | null;
   editLoading: boolean;
   onNameChange: (value: string) => void;
+  onEmailChange: (value: string) => void;
   onOldPasswordChange: (value: string) => void;
   onNewPasswordChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -16,11 +18,13 @@ export function ProfileModal(props: ProfileModalProps) {
   const {
     isOpen,
     editName,
+    editEmail,
     editOldPassword,
     editNewPassword,
     editError,
     editLoading,
     onNameChange,
+    onEmailChange,
     onOldPasswordChange,
     onNewPasswordChange,
     onSubmit,
@@ -51,6 +55,19 @@ export function ProfileModal(props: ProfileModalProps) {
               type="text"
               value={editName}
               onChange={(e) => onNameChange(e.target.value)}
+              placeholder="Deixe em branco para não alterar"
+              className="input-theme text-gray-900"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Novo Email (opcional)
+            </label>
+            <input
+              type="email"
+              value={editEmail}
+              onChange={(e) => onEmailChange(e.target.value)}
               placeholder="Deixe em branco para não alterar"
               className="input-theme text-gray-900"
             />

@@ -18,6 +18,7 @@ function Settings() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
   const [editOldPassword, setEditOldPassword] = useState('');
   const [editNewPassword, setEditNewPassword] = useState('');
   const [editError, setEditError] = useState<string | null>(null);
@@ -38,9 +39,7 @@ function Settings() {
     setSuccess('Logout realizado com sucesso.');
     try {
       localStorage.removeItem('token');
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      // ignore
     }
     setTimeout(() => {
       navigate('/login');
@@ -52,15 +51,24 @@ function Settings() {
     setEditError(null);
     setEditLoading(true);
 
+    const user = getUser();  
+    if (!user) {
+    setEditError('Usuário não identificado. Faça login novamente.');
+    setEditLoading(false);
+    return;
+  }
+
     try {
       const payload: Record<string, string> = {};
       if (editName.trim()) payload.nome = editName;
+      if (editEmail.trim()) payload.email = editEmail;
       if (editOldPassword) payload.senha_antiga = editOldPassword;
       if (editNewPassword) payload.senha_nova = editNewPassword;
 
       const resp = await api.put<ProfileResponse>('/perfil', payload);
       setSuccess(`Profile updated successfully! New name: ${resp.data.name}`);
       setEditName('');
+      setEditEmail('');
       setEditOldPassword('');
       setEditNewPassword('');
       setShowEditProfile(false);
@@ -191,6 +199,7 @@ function Settings() {
             onClick={() => {
               const user = getUser();
               if (user?.name) setEditName(user.name);
+              if (user?.email) setEditEmail(user.email);
               setShowEditProfile(true);
             }}
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
@@ -270,11 +279,13 @@ function Settings() {
       <ProfileModal
         isOpen={showEditProfile}
         editName={editName}
+        editEmail={editEmail}
         editOldPassword={editOldPassword}
         editNewPassword={editNewPassword}
         editError={editError}
         editLoading={editLoading}
         onNameChange={setEditName}
+        onEmailChange={setEditEmail}
         onOldPasswordChange={setEditOldPassword}
         onNewPasswordChange={setEditNewPassword}
         onSubmit={handleEditProfile}
@@ -282,6 +293,7 @@ function Settings() {
           setShowEditProfile(false);
           setEditError(null);
           setEditName('');
+          setEditEmail('');
           setEditOldPassword('');
           setEditNewPassword('');
         }}
