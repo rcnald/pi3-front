@@ -16,6 +16,7 @@ import {
 import type { RecordData } from '../types/record';
 import type { MeasurementUnit } from '../models/measurementUnit';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
+import { Edit2, Trash2 } from 'lucide-react';
 
 function Dashboard() {
   const { habits } = useHabits();
@@ -434,19 +435,19 @@ function Dashboard() {
                         <>
                           <button
                             onClick={() => handleEditClick(reg)}
-                            className="text-cyan-600 hover:text-cyan-800 disabled:opacity-30"
+                            className="text-cyan-600 hover:text-cyan-800 disabled:opacity-30 inline-flex items-center gap-1"
                             disabled={processingAction}
                             title="Editar"
                           >
-                            ✏️
+                            <Edit2 size={16} />
                           </button>
                           <button
                             onClick={() => handleDeleteClick(reg.id)}
-                            className="text-red-600 hover:text-red-800 disabled:opacity-30"
+                            className="text-red-600 hover:text-red-800 disabled:opacity-30 inline-flex items-center gap-1"
                             disabled={processingAction}
                             title="Excluir"
                           >
-                            🗑️
+                            <Trash2 size={16} />
                           </button>
                         </>
                       )}
