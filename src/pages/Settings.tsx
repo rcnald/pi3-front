@@ -9,6 +9,7 @@ import GoalModal, {
 import { ProfileModal } from '../components/ProfileModal';
 import { useAuth } from '../hooks/useAuth';
 import { useHabits } from '../hooks';
+import { Activity, Droplet, LogOut, Moon, User } from 'lucide-react';
 // import { User, Bell, Moon, Droplet, Activity, ChevronRight, LogOut } from 'lucide-react'; // Exemplo de ícones
 
 function Settings() {
@@ -196,10 +197,9 @@ function Settings() {
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
           >
             <div className="flex items-center gap-4">
-              {/* <User className="text-gray-500" /> */}
+              <User className="text-gray-500" size={20} />
               <span className="font-medium text-gray-700">Meu perfil</span>
             </div>
-            {/* <ChevronRight className="text-gray-400" /> */}
             <span>&gt;</span>
           </li>
         </ul>
@@ -219,7 +219,7 @@ function Settings() {
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
           >
             <div className="flex items-center gap-4">
-              {/* <Moon className="text-gray-500" /> */}
+              <Moon className="text-gray-500" size={20} />
               <span className="font-medium text-gray-700">Meta Sono</span>
             </div>
             <span>&gt;</span>
@@ -229,7 +229,7 @@ function Settings() {
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
           >
             <div className="flex items-center gap-4">
-              {/* <Droplet className="text-gray-500" /> */}
+              <Droplet className="text-gray-500" size={20} />
               <span className="font-medium text-gray-700">Meta Água</span>
             </div>
             <span>&gt;</span>
@@ -239,7 +239,7 @@ function Settings() {
             className="py-4 flex justify-between items-center hover:bg-gray-50 -mx-8 px-8 cursor-pointer"
           >
             <div className="flex items-center gap-4">
-              {/* <Activity className="text-gray-500" /> */}
+              <Activity className="text-gray-500" size={20} />
               <span className="font-medium text-gray-700">
                 Meta Atividade Física
               </span>
@@ -288,8 +288,11 @@ function Settings() {
         }}
       />
 
-      <button onClick={handleLogout} className="btn-logout active:scale-[.98]">
-        {/* <LogOut size={20} /> */}
+      <button
+        onClick={handleLogout}
+        className="btn-logout active:scale-[.98] flex items-center justify-center gap-2"
+      >
+        <LogOut size={20} />
         <span>Sair da Conta</span>
       </button>
     </MainLayout>
