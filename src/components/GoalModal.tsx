@@ -1,36 +1,42 @@
 import { useEffect, useId, useMemo, useState } from 'react';
+import { Habits } from '../types/habit.d';
+import { MeasurementUnitsEnum } from '../types/measurementUnit.d';
 
 export type GoalType = 'sleep' | 'water' | 'activity';
 
 export type GoalUnitOption = {
-  value: string;
+  value: number; // ID from MeasurementUnitsEnum
   label: string;
 };
 
 export type GoalValue = {
   value: string;
-  unit: string;
-  goalMode?: 'daily' | 'weekly';
-  weeklyFrequency?: string;
+  measurementUnitId: number;
+  weeklyFrequency: string;
 };
 
-const GOAL_CONFIG: Record<GoalType, {
-  title: string;
-  valueInputLabel: string;
-  unitInputLabel: string;
-  unitOptions: GoalUnitOption[];
-  emptyValueMessage: string;
-  goalModeLabel: string;
-  minValue: number;
-  step: number;
-}> = {
+const GOAL_CONFIG: Record<
+  GoalType,
+  {
+    habitId: number;
+    title: string;
+    valueInputLabel: string;
+    unitInputLabel: string;
+    unitOptions: GoalUnitOption[];
+    emptyValueMessage: string;
+    goalModeLabel: string;
+    minValue: number;
+    step: number;
+  }
+> = {
   sleep: {
+    habitId: Habits.Sleep,
     title: 'Cadastrar meta de sono',
     valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
-      { value: 'horas', label: 'Horas' },
-      { value: 'minutos', label: 'Minutos' },
+      { value: MeasurementUnitsEnum.Min, label: 'Minutos' },
+      { value: MeasurementUnitsEnum.H, label: 'Horas' },
     ],
     emptyValueMessage: 'Informe a quantidade desejada (mínimo 1).',
     goalModeLabel: 'Tipo de meta',
@@ -38,12 +44,13 @@ const GOAL_CONFIG: Record<GoalType, {
     step: 1,
   },
   water: {
+    habitId: Habits.Water,
     title: 'Cadastrar meta de água',
     valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
-      { value: 'ml', label: 'Mililitros (ml)' },
-      { value: 'l', label: 'Litros (L)' },
+      { value: MeasurementUnitsEnum.Ml, label: 'Mililitros (ml)' },
+      { value: MeasurementUnitsEnum.L, label: 'Litros (L)' },
     ],
     emptyValueMessage: 'Informe a quantidade de água desejada (mínimo 1).',
     goalModeLabel: 'Tipo de meta',
@@ -51,13 +58,16 @@ const GOAL_CONFIG: Record<GoalType, {
     step: 1,
   },
   activity: {
+    habitId: Habits.PhysicalActivity,
     title: 'Cadastrar meta de atividade física',
     valueInputLabel: 'Meta Diária',
     unitInputLabel: 'Unidade',
     unitOptions: [
-      { value: 'minutos', label: 'Minutos' },
+      { value: MeasurementUnitsEnum.Min, label: 'Minutos' },
+      { value: MeasurementUnitsEnum.H, label: 'Horas' },
     ],
-    emptyValueMessage: 'Informe a quantidade de minutos desejada (mínimo 1 minuto).',
+    emptyValueMessage:
+      'Informe a quantidade de minutos desejada (mínimo 1 minuto).',
     goalModeLabel: 'Tipo de meta',
     minValue: 1,
     step: 1,
@@ -71,7 +81,7 @@ export type GoalModalProps = {
   loading?: boolean;
   errorMessage?: string | null;
   onClose: () => void;
-  onSave: (goal: GoalValue) => Promise<void> | void;
+  onSave: (goal: GoalValue, habitId: number) => Promise<void> | void;
 };
 
 const GoalModal = ({
@@ -85,8 +95,11 @@ const GoalModal = ({
 }: GoalModalProps) => {
   const config = GOAL_CONFIG[goalType];
   const defaultUnit = useMemo(
-    () => currentGoal?.unit ?? config.unitOptions[0]?.value ?? 'unidade',
-    [config.unitOptions, currentGoal?.unit]
+    () =>
+      currentGoal?.measurementUnitId ??
+      config.unitOptions[0]?.value ??
+      MeasurementUnitsEnum.Min,
+    [config.unitOptions, currentGoal?.measurementUnitId]
   );
 
   const valueInputId = useId();
@@ -95,13 +108,19 @@ const GoalModal = ({
 
   const [newGoalValue, setNewGoalValue] = useState(currentGoal?.value ?? '');
   const [newGoalUnit, setNewGoalUnit] = useState(defaultUnit);
-  const [weeklyFrequency, setWeeklyFrequency] = useState(currentGoal?.weeklyFrequency ?? '1');
+  const [weeklyFrequency, setWeeklyFrequency] = useState(
+    currentGoal?.weeklyFrequency ?? '1'
+  );
   const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
       setNewGoalValue(currentGoal?.value ?? '');
-      setNewGoalUnit(currentGoal?.unit ?? config.unitOptions[0]?.value ?? '');
+      setNewGoalUnit(
+        currentGoal?.measurementUnitId ??
+          config.unitOptions[0]?.value ??
+          MeasurementUnitsEnum.Min
+      );
       setWeeklyFrequency(currentGoal?.weeklyFrequency ?? '1');
       setLocalError(null);
     }
@@ -115,23 +134,36 @@ const GoalModal = ({
     event.preventDefault();
     const parsedValue = parseFloat(newGoalValue.replace(',', '.'));
 
-    if (!newGoalValue || Number.isNaN(parsedValue) || parsedValue < config.minValue) {
+    if (
+      !newGoalValue ||
+      Number.isNaN(parsedValue) ||
+      parsedValue < config.minValue
+    ) {
       setLocalError(config.emptyValueMessage);
       return;
     }
 
     const parsedFrequency = parseInt(weeklyFrequency);
-    if (!weeklyFrequency || Number.isNaN(parsedFrequency) || parsedFrequency <= 0 || parsedFrequency > 7) {
-      setLocalError('Informe uma frequência semanal válida (1 a 7 vezes por semana).');
+    if (
+      !weeklyFrequency ||
+      Number.isNaN(parsedFrequency) ||
+      parsedFrequency <= 0 ||
+      parsedFrequency > 7
+    ) {
+      setLocalError(
+        'Informe uma frequência semanal válida (1 a 7 vezes por semana).'
+      );
       return;
     }
 
-    await onSave({ 
-      value: newGoalValue, 
-      unit: newGoalUnit,
-      goalMode: 'weekly',
-      weeklyFrequency: weeklyFrequency,
-    });
+    await onSave(
+      {
+        value: newGoalValue,
+        measurementUnitId: newGoalUnit,
+        weeklyFrequency: weeklyFrequency,
+      },
+      config.habitId
+    );
   };
 
   const combinedError = localError ?? errorMessage;
@@ -150,7 +182,10 @@ const GoalModal = ({
         </h3>
 
         {combinedError && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700" role="alert">
+          <div
+            className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700"
+            role="alert"
+          >
             {combinedError}
           </div>
         )}
@@ -170,18 +205,14 @@ const GoalModal = ({
                 />
                 <input
                   type="text"
-                  value={config.unitOptions.find((opt) => opt.value === currentGoal.unit)?.label ?? currentGoal.unit}
+                  value={
+                    config.unitOptions.find(
+                      (opt) => opt.value === currentGoal.measurementUnitId
+                    )?.label ?? 'Unidade'
+                  }
                   readOnly
                   className="w-48 rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
                 />
-                {currentGoal.goalMode && (
-                  <input
-                    type="text"
-                    value={`Frequência: ${currentGoal.weeklyFrequency ?? '7'}x/semana`}
-                    readOnly
-                    className="w-full rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
-                  />
-                )}
               </div>
             </div>
           )}
@@ -190,9 +221,12 @@ const GoalModal = ({
             <span className="mb-4 block text-center font-medium text-gray-700">
               Meta nova
             </span>
-            
+
             <div className="mb-6 flex flex-col gap-2">
-              <label className="text-sm font-medium text-gray-600" htmlFor={weeklyFrequencyInputId}>
+              <label
+                className="text-sm font-medium text-gray-600"
+                htmlFor={weeklyFrequencyInputId}
+              >
                 Frequência Semanal (dias por semana)
               </label>
               <input
@@ -213,7 +247,10 @@ const GoalModal = ({
 
             <div className="flex flex-wrap justify-center gap-4">
               <div className="flex w-48 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-600" htmlFor={valueInputId}>
+                <label
+                  className="text-sm font-medium text-gray-600"
+                  htmlFor={valueInputId}
+                >
                   {config.valueInputLabel}
                 </label>
                 <input
@@ -228,13 +265,18 @@ const GoalModal = ({
               </div>
 
               <div className="flex w-48 flex-col gap-1">
-                <label className="text-sm font-medium text-gray-600" htmlFor={unitInputId}>
+                <label
+                  className="text-sm font-medium text-gray-600"
+                  htmlFor={unitInputId}
+                >
                   {config.unitInputLabel}
                 </label>
                 <select
                   id={unitInputId}
                   value={newGoalUnit}
-                  onChange={(event) => setNewGoalUnit(event.target.value)}
+                  onChange={(event) =>
+                    setNewGoalUnit(Number(event.target.value))
+                  }
                   className="rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg focus:border-cyan-500 focus:outline-none"
                 >
                   {config.unitOptions.map((option) => (

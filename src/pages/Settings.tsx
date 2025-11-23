@@ -8,13 +8,11 @@ import GoalModal, {
 } from '../components/GoalModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { useAuth } from '../hooks/useAuth';
-import { useHabits } from '../hooks';
 import { Activity, Droplet, LogOut, Moon, User } from 'lucide-react';
 
 function Settings() {
   const navigate = useNavigate();
   const { getUser, updateUser } = useAuth();
-  const { habits, loading: habitsLoading, error: habitsError } = useHabits();
   const [success, setSuccess] = useState<string | null>(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [editName, setEditName] = useState('');
@@ -117,36 +115,12 @@ function Settings() {
     setGoalModalError(null);
   };
 
-  const handleSaveGoal = async (goal: GoalValue) => {
+  const handleSaveGoal = async (goal: GoalValue, habitId: number) => {
     if (!activeGoalType) return;
 
     const user = getUser();
     if (!user) {
       setGoalModalError('Usuário não identificado. Faça login novamente.');
-      return;
-    }
-
-    if (habitsLoading) {
-      setGoalModalError('Carregando hábitos...');
-      return;
-    }
-
-    if (habitsError) {
-      setGoalModalError('Erro ao carregar hábitos.');
-      return;
-    }
-
-    // Mapeamento temporário de IDs de hábitos (ajuste conforme seu banco de dados)
-    const habitIds: Record<GoalType, number> = {
-      sleep: 2,
-      water: 1,
-      activity: 3,
-    };
-
-    const habitId = habitIds[activeGoalType];
-    const habit = habits.find((h) => h.id === habitId);
-    if (!habit) {
-      setGoalModalError('Hábito não encontrado.');
       return;
     }
 
@@ -157,10 +131,9 @@ function Settings() {
       const payload = {
         userId: user.id,
         habitId: habitId,
-        dailyGoal: goal.value,
-        unit: goal.unit,
-        weeklyFrequency: goal.weeklyFrequency,
-        startDate: new Date().toISOString().split('T')[0],
+        measurementUnitId: goal.measurementUnitId,
+        dailyGoal: parseFloat(goal.value.replace(',', '.')),
+        weeklyFrequency: parseInt(goal.weeklyFrequency),
       };
 
       await api.post('/user-habits', payload);
