@@ -30,5 +30,13 @@ export function useAuth() {
     }
   };
 
-  return { isAuthenticated, login, logout, getUser };
+  const updateUser = (updatedData: Partial<User>) => {
+    const currentUser = getUser();
+    if (!currentUser) return;
+
+    const updatedUser = { ...currentUser, ...updatedData };
+    localStorage.setItem(USER_KEY, JSON.stringify(updatedUser));
+  };
+
+  return { isAuthenticated, login, logout, getUser, updateUser };
 }

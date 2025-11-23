@@ -49,7 +49,7 @@ export function ProfileModal(props: ProfileModalProps) {
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Novo Nome (opcional)
+              Nome
             </label>
             <input
               type="text"
@@ -62,7 +62,7 @@ export function ProfileModal(props: ProfileModalProps) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Novo Email (opcional)
+              E-mail
             </label>
             <input
               type="email"
@@ -101,6 +101,13 @@ export function ProfileModal(props: ProfileModalProps) {
 
           <div className="flex gap-3">
             <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 py-2 rounded-md font-bold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
+            >
+              Cancelar
+            </button>
+            <button
               type="submit"
               disabled={editLoading}
               className={`flex-1 py-2 rounded-md font-bold text-white ${
@@ -108,13 +115,6 @@ export function ProfileModal(props: ProfileModalProps) {
               } transition`}
             >
               {editLoading ? 'Salvando...' : 'Salvar'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 py-2 rounded-md font-bold text-gray-700 bg-gray-200 hover:bg-gray-300 transition"
-            >
-              Cancelar
             </button>
           </div>
         </form>

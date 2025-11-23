@@ -13,7 +13,7 @@ import { Activity, Droplet, LogOut, Moon, User } from 'lucide-react';
 
 function Settings() {
   const navigate = useNavigate();
-  const { getUser } = useAuth();
+  const { getUser, updateUser } = useAuth();
   const { habits, loading: habitsLoading, error: habitsError } = useHabits();
   const [success, setSuccess] = useState<string | null>(null);
   const [showEditProfile, setShowEditProfile] = useState(false);
@@ -39,7 +39,9 @@ function Settings() {
     setSuccess('Logout realizado com sucesso.');
     try {
       localStorage.removeItem('token');
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
+      // ignore
     }
     setTimeout(() => {
       navigate('/login');
@@ -51,34 +53,40 @@ function Settings() {
     setEditError(null);
     setEditLoading(true);
 
-    const user = getUser();  
-    if (!user) {
-    setEditError('Usuário não identificado. Faça login novamente.');
-    setEditLoading(false);
-    return;
-  }
-
     try {
-      const payload: Record<string, string> = {};
-      if (editName.trim()) payload.nome = editName;
-      if (editEmail.trim()) payload.email = editEmail;
-      if (editOldPassword) payload.senha_antiga = editOldPassword;
-      if (editNewPassword) payload.senha_nova = editNewPassword;
+      const user = getUser();
+      if (!user?.id) {
+        setEditError('Usuário não identificado.');
+        return;
+      }
 
-      const resp = await api.put<ProfileResponse>('/perfil', payload);
-      setSuccess(`Profile updated successfully! New name: ${resp.data.name}`);
+      const payload: Record<string, string> = {};
+      if (editName.trim()) payload.name = editName;
+      if (editEmail.trim()) payload.email = editEmail;
+      if (editOldPassword) payload.oldPassword = editOldPassword;
+      if (editNewPassword) payload.newPassword = editNewPassword;
+
+      await api.put(`/users/${user.id}`, payload);
+
+      const updates: Partial<User> = {};
+      if (editName.trim()) updates.name = editName;
+      if (editEmail.trim()) updates.email = editEmail;
+      updateUser(updates);
+
+      setSuccess('Perfil atualizado com sucesso!');
       setEditName('');
       setEditEmail('');
       setEditOldPassword('');
       setEditNewPassword('');
       setShowEditProfile(false);
+      setTimeout(() => setSuccess(null), 3000);
     } catch (err: unknown) {
       const error = err as {
-        response?: { status: number; data?: { erro?: string } };
+        response?: { status: number; data?: string };
         message?: string;
       };
       if (error?.response?.status === 400) {
-        setEditError(error.response.data?.erro ?? 'Invalid request.');
+        setEditError(error.response.data ?? 'Requisição inválida.');
       } else {
         if (import.meta.env.DEV) {
           setEditError(
