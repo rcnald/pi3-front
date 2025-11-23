@@ -144,7 +144,7 @@ function Login() {
               href="/signup"
               className="font-bold text-cyan-600 hover:underline ml-1"
             >
-              Registe-se
+              Registre-se
             </a>
             {/* <Link to="/signup" className="font-bold text-cyan-600 hover:underline ml-1">Registe-se</Link> */}
           </p>
