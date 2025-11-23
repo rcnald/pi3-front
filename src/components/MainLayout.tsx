@@ -47,9 +47,13 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
         <ul className="space-y-2">
           {navItems.map((item) => (
             <li key={item.id}>
-              <a href={item.path} className={getNavLinkClass(item.id)}>
+              <button
+                type="button"
+                className={getNavLinkClass(item.id)}
+                onClick={() => navigate(item.path)}
+              >
                 <span>{item.name}</span>
-              </a>
+              </button>
             </li>
           ))}
         </ul>
