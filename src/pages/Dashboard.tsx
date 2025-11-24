@@ -16,7 +16,7 @@ import {
 import type { RecordData } from '../types/record';
 import type { MeasurementUnit } from '../models/measurementUnit';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
-import { Edit2, Trash2, Plus, Calendar, ListChecks, TrendingUp } from 'lucide-react';
+import { Edit2, Trash2, Plus, Calendar, ListChecks } from 'lucide-react';
 
 function Dashboard() {
   const { habits } = useHabits();
@@ -238,11 +238,13 @@ function Dashboard() {
     <MainLayout activePage="goals">
       <div className="card-theme overflow-hidden mb-8 animate-fade-in-up">
         {/* Gradient Header */}
-        <div className={`bg-gradient-to-r ${
-          editingId 
-            ? 'from-orange-500 via-amber-500 to-yellow-500' 
-            : 'from-cyan-500 via-blue-500 to-teal-500'
-        } px-8 py-6 text-white`}>
+        <div
+          className={`bg-gradient-to-r ${
+            editingId
+              ? 'from-orange-500 via-amber-500 to-yellow-500'
+              : 'from-cyan-500 via-blue-500 to-teal-500'
+          } px-8 py-6 text-white`}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
@@ -250,10 +252,14 @@ function Dashboard() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold">
-                  {editingId ? 'Editando Atividade' : 'Registrar Nova Atividade'}
+                  {editingId
+                    ? 'Editando Atividade'
+                    : 'Registrar Nova Atividade'}
                 </h2>
                 <p className="text-white/80 text-sm mt-1">
-                  {editingId ? 'Atualize os dados do registro' : 'Adicione uma nova atividade ao seu dia'}
+                  {editingId
+                    ? 'Atualize os dados do registro'
+                    : 'Adicione uma nova atividade ao seu dia'}
                 </p>
               </div>
             </div>
@@ -269,125 +275,128 @@ function Dashboard() {
         </div>
 
         <div className="p-8">
-
-        <form className="space-y-6" onSubmit={onSubmit}>
-          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
-            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-              <span className="text-xl">🎯</span>
-              Atividade
-            </label>
-            <select
-              className="input-theme"
-              value={selectedHabitId}
-              onChange={(e) =>
-                setSelectedHabitId(e.target.value ? Number(e.target.value) : '')
-              }
-              disabled={!!editingId}
-            >
-              <option value="">Selecione um hábito</option>
-              {habits.map((habit) => (
-                <option key={habit.id} value={habit.id}>
-                  {habit.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-xl">📊</span>
-              <h4 className="text-sm font-bold text-gray-700">Quantidade e Medida</h4>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-2">
-                  Quantidade
-                </label>
-              <input
-                type="number"
-                placeholder="Ex: 1000"
-                value={quantity}
-                onChange={(e) => setQuantity(e.target.value)}
-                className="input-theme"
-              />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-2">
-                  {selectedHabitId ? 'Unidade de medida' : 'Unidade'}
-                </label>
+          <form className="space-y-6" onSubmit={onSubmit}>
+            <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <span className="text-xl">🎯</span>
+                Atividade
+              </label>
               <select
                 className="input-theme"
-                value={selectedUnitId}
+                value={selectedHabitId}
                 onChange={(e) =>
-                  setSelectedUnitId(
+                  setSelectedHabitId(
                     e.target.value ? Number(e.target.value) : ''
                   )
                 }
-                disabled={!selectedHabitId}
+                disabled={!!editingId}
               >
-                <option value="">Selecione uma unidade</option>
-                {allowedUnits.map((u) => (
-                  <option key={u.id} value={u.id}>
-                    {u.name} ({u.symbol})
+                <option value="">Selecione um hábito</option>
+                {habits.map((habit) => (
+                  <option key={habit.id} value={habit.id}>
+                    {habit.name}
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xl">📊</span>
+                <h4 className="text-sm font-bold text-gray-700">
+                  Quantidade e Medida
+                </h4>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-2">
+                    Quantidade
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Ex: 1000"
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                    className="input-theme"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-2">
+                    {selectedHabitId ? 'Unidade de medida' : 'Unidade'}
+                  </label>
+                  <select
+                    className="input-theme"
+                    value={selectedUnitId}
+                    onChange={(e) =>
+                      setSelectedUnitId(
+                        e.target.value ? Number(e.target.value) : ''
+                      )
+                    }
+                    disabled={!selectedHabitId}
+                  >
+                    <option value="">Selecione uma unidade</option>
+                    {allowedUnits.map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.name} ({u.symbol})
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
-            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
-              <Calendar size={18} className="text-cyan-600" />
-              Data
-            </label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="input-theme w-full text-center font-semibold"
-            />
-          </div>
+            <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+                <Calendar size={18} className="text-cyan-600" />
+                Data
+              </label>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                className="input-theme w-full text-center font-semibold"
+              />
+            </div>
 
-          <button
-            type="submit"
-            className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
-              editingId 
-                ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600' 
-                : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600'
-            } disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]`}
-            disabled={creating || processingAction || !canSubmit}
-          >
-            {creating || processingAction ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                {editingId ? <Edit2 size={20} /> : <Plus size={20} />}
-                {editingId ? 'Salvar Alterações' : 'Registrar Atividade'}
-              </>
+            <button
+              type="submit"
+              className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
+                editingId
+                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600'
+                  : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600'
+              } disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]`}
+              disabled={creating || processingAction || !canSubmit}
+            >
+              {creating || processingAction ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  {editingId ? <Edit2 size={20} /> : <Plus size={20} />}
+                  {editingId ? 'Salvar Alterações' : 'Registrar Atividade'}
+                </>
+              )}
+            </button>
+
+            {formError && (
+              <div className="rounded-xl border-2 border-red-300 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm animate-shake">
+                <div className="flex items-center gap-2">
+                  <span className="text-red-500 font-bold text-lg">⚠</span>
+                  <span className="font-medium">{formError}</span>
+                </div>
+              </div>
             )}
-          </button>
-
-          {formError && (
-            <div className="rounded-xl border-2 border-red-300 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm animate-shake">
-              <div className="flex items-center gap-2">
-                <span className="text-red-500 font-bold text-lg">⚠</span>
-                <span className="font-medium">{formError}</span>
+            {formSuccess && (
+              <div className="rounded-xl border-2 border-green-300 bg-green-50 px-5 py-4 text-sm text-green-700 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-500 font-bold text-lg">✓</span>
+                  <span className="font-medium">{formSuccess}</span>
+                </div>
               </div>
-            </div>
-          )}
-          {formSuccess && (
-            <div className="rounded-xl border-2 border-green-300 bg-green-50 px-5 py-4 text-sm text-green-700 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-green-500 font-bold text-lg">✓</span>
-                <span className="font-medium">{formSuccess}</span>
-              </div>
-            </div>
-          )}
-        </form>
+            )}
+          </form>
         </div>
       </div>
 
@@ -401,17 +410,15 @@ function Dashboard() {
                 <ListChecks size={28} />
               </div>
               <div>
-                <h2 className="text-2xl font-bold">
-                  Registros Diários
-                </h2>
-                <p className="text-white/80 text-sm mt-1">Histórico de todas as suas atividades</p>
+                <h2 className="text-2xl font-bold">Registros Diários</h2>
+                <p className="text-white/80 text-sm mt-1">
+                  Histórico de todas as suas atividades
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl">
               <Calendar size={18} />
-              <label className="text-sm font-medium">
-                Filtrar:
-              </label>
+              <label className="text-sm font-medium">Filtrar:</label>
               <input
                 type="date"
                 value={filterDate}
@@ -431,88 +438,88 @@ function Dashboard() {
         </div>
 
         <div className="p-8">
-        <div className="overflow-x-auto">
-          <table className="table-theme">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Atividade
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Qtd
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Un
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Data
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Ações
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {recordsLoading ? (
+          <div className="overflow-x-auto">
+            <table className="table-theme">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td colSpan={5} className="p-4 text-center">
-                    Carregando...
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Atividade
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Qtd
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Un
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Data
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
-              ) : records.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="p-4 text-center text-gray-500">
-                    Nenhum registro.
-                  </td>
-                </tr>
-              ) : (
-                records.map((reg) => (
-                  <tr
-                    key={reg.id}
-                    className={editingId === reg.id ? 'bg-blue-50' : ''}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {reg.userHabit?.habit?.name || `Habit #${reg.id}`}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {reg.value}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {reg.userHabit?.measurementUnit?.symbol ||
-                        reg.userHabit?.habit?.measurementUnit?.symbol ||
-                        '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {formatDateDisplay(reg.date)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
-                      {!editingId && (
-                        <>
-                          <button
-                            onClick={() => handleEditClick(reg)}
-                            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-cyan-100 text-cyan-600 hover:bg-cyan-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
-                            disabled={processingAction}
-                            title="Editar"
-                          >
-                            <Edit2 size={16} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteClick(reg.id)}
-                            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
-                            disabled={processingAction}
-                            title="Excluir"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </>
-                      )}
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {recordsLoading ? (
+                  <tr>
+                    <td colSpan={5} className="p-4 text-center">
+                      Carregando...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : records.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-4 text-center text-gray-500">
+                      Nenhum registro.
+                    </td>
+                  </tr>
+                ) : (
+                  records.map((reg) => (
+                    <tr
+                      key={reg.id}
+                      className={editingId === reg.id ? 'bg-blue-50' : ''}
+                    >
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        {reg.userHabit?.habit?.name || `Habit #${reg.id}`}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {reg.value}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {reg.userHabit?.measurementUnit?.symbol ||
+                          reg.userHabit?.habit?.measurementUnit?.symbol ||
+                          '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                        {formatDateDisplay(reg.date)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-3">
+                        {!editingId && (
+                          <>
+                            <button
+                              onClick={() => handleEditClick(reg)}
+                              className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-cyan-100 text-cyan-600 hover:bg-cyan-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
+                              disabled={processingAction}
+                              title="Editar"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(reg.id)}
+                              className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
+                              disabled={processingAction}
+                              title="Excluir"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </MainLayout>

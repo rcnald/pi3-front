@@ -1,7 +1,7 @@
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 
 const api: AxiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://pi3-backend-9lup.onrender.com/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
