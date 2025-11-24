@@ -229,13 +229,6 @@ const GoalHistoryModal = ({
                       >
                         <Pencil size={18} />
                       </button>
-                      <button
-                        onClick={() => handleDelete(currentGoal.id)}
-                        className="p-2.5 bg-white text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:scale-95"
-                        title="Excluir"
-                      >
-                        <Trash2 size={18} />
-                      </button>
                     </div>
                   </div>
                   
