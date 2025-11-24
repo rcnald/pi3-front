@@ -16,7 +16,7 @@ import {
 import type { RecordData } from '../types/record';
 import type { MeasurementUnit } from '../models/measurementUnit';
 import { MeasurementUnitsEnum } from '../models/measurementUnit';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, Plus, Calendar, ListChecks, TrendingUp } from 'lucide-react';
 
 function Dashboard() {
   const { habits } = useHabits();
@@ -236,28 +236,44 @@ function Dashboard() {
 
   return (
     <MainLayout activePage="goals">
-      <div
-        className={`card-theme p-8 mb-8 animate-fade-in-up ${
-          editingId ? 'border-2 border-cyan-500' : 'card-header-accent'
-        }`}
-      >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            {editingId ? '✏️ Editando Atividade' : 'Registrar Nova Atividade'}
-          </h2>
-          {editingId && (
-            <button
-              onClick={handleCancelEdit}
-              className="text-sm text-red-500 hover:underline"
-            >
-              Cancelar Edição
-            </button>
-          )}
+      <div className="card-theme overflow-hidden mb-8 animate-fade-in-up">
+        {/* Gradient Header */}
+        <div className={`bg-gradient-to-r ${
+          editingId 
+            ? 'from-orange-500 via-amber-500 to-yellow-500' 
+            : 'from-cyan-500 via-blue-500 to-teal-500'
+        } px-8 py-6 text-white`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+                {editingId ? <Edit2 size={28} /> : <Plus size={28} />}
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {editingId ? 'Editando Atividade' : 'Registrar Nova Atividade'}
+                </h2>
+                <p className="text-white/80 text-sm mt-1">
+                  {editingId ? 'Atualize os dados do registro' : 'Adicione uma nova atividade ao seu dia'}
+                </p>
+              </div>
+            </div>
+            {editingId && (
+              <button
+                onClick={handleCancelEdit}
+                className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition-all"
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
         </div>
 
-        <form className="space-y-5" onSubmit={onSubmit}>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+        <div className="p-8">
+
+        <form className="space-y-6" onSubmit={onSubmit}>
+          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <span className="text-xl">🎯</span>
               Atividade
             </label>
             <select
@@ -277,11 +293,16 @@ function Dashboard() {
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Quantidade
-              </label>
+          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xl">📊</span>
+              <h4 className="text-sm font-bold text-gray-700">Quantidade e Medida</h4>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-2">
+                  Quantidade
+                </label>
               <input
                 type="number"
                 placeholder="Ex: 1000"
@@ -289,11 +310,11 @@ function Dashboard() {
                 onChange={(e) => setQuantity(e.target.value)}
                 className="input-theme"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {selectedHabitId ? 'Unidade de medida' : 'Unidade (selecione um hábito antes)'}
-              </label>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-2">
+                  {selectedHabitId ? 'Unidade de medida' : 'Unidade'}
+                </label>
               <select
                 className="input-theme"
                 value={selectedUnitId}
@@ -311,71 +332,105 @@ function Dashboard() {
                   </option>
                 ))}
               </select>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Data
-              </label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="input-theme"
-              />
-            </div>
+          </div>
+
+          <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <Calendar size={18} className="text-cyan-600" />
+              Data
+            </label>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="input-theme w-full text-center font-semibold"
+            />
           </div>
 
           <button
             type="submit"
-            className={`w-full py-3 text-white font-semibold rounded-lg transition shadow-md ${
-              editingId ? 'bg-cyan-600 hover:bg-cyan-700' : 'btn-primary'
-            } disabled:opacity-60`}
+            className={`w-full py-4 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 ${
+              editingId 
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600' 
+                : 'bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600'
+            } disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98]`}
             disabled={creating || processingAction || !canSubmit}
           >
-            {creating || processingAction
-              ? 'Salvando...'
-              : editingId
-              ? 'Salvar Alterações'
-              : 'Registrar Atividade'}
+            {creating || processingAction ? (
+              <>
+                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                Salvando...
+              </>
+            ) : (
+              <>
+                {editingId ? <Edit2 size={20} /> : <Plus size={20} />}
+                {editingId ? 'Salvar Alterações' : 'Registrar Atividade'}
+              </>
+            )}
           </button>
 
           {formError && (
-            <p className="text-sm text-red-600 mt-2">{formError}</p>
+            <div className="rounded-xl border-2 border-red-300 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm animate-shake">
+              <div className="flex items-center gap-2">
+                <span className="text-red-500 font-bold text-lg">⚠</span>
+                <span className="font-medium">{formError}</span>
+              </div>
+            </div>
           )}
           {formSuccess && (
-            <p className="text-sm text-cyan-600 mt-2 font-medium">
-              {formSuccess}
-            </p>
+            <div className="rounded-xl border-2 border-green-300 bg-green-50 px-5 py-4 text-sm text-green-700 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-green-500 font-bold text-lg">✓</span>
+                <span className="font-medium">{formSuccess}</span>
+              </div>
+            </div>
           )}
         </form>
+        </div>
       </div>
 
       {/* LISTAGEM */}
-      <div className="card-theme p-8 animate-fade-in-up card-header-accent">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Registros Diários
-          </h2>
-          <div className="flex items-center gap-2">
-            <label className="text-sm font-medium text-gray-700">
-              Filtrar por data:
-            </label>
-            <input
-              type="date"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="input-theme w-auto"
-            />
-            {filterDate && (
-              <button
-                onClick={() => setFilterDate('')}
-                className="text-sm text-cyan-600 hover:text-cyan-800 underline"
-              >
-                Limpar
-              </button>
-            )}
+      <div className="card-theme overflow-hidden animate-fade-in-up">
+        {/* Gradient Header */}
+        <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 px-8 py-6 text-white">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+                <ListChecks size={28} />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold">
+                  Registros Diários
+                </h2>
+                <p className="text-white/80 text-sm mt-1">Histórico de todas as suas atividades</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-xl">
+              <Calendar size={18} />
+              <label className="text-sm font-medium">
+                Filtrar:
+              </label>
+              <input
+                type="date"
+                value={filterDate}
+                onChange={(e) => setFilterDate(e.target.value)}
+                className="bg-white/90 border-0 rounded-lg px-3 py-2 text-gray-800 font-medium focus:ring-2 focus:ring-white/50 focus:outline-none"
+              />
+              {filterDate && (
+                <button
+                  onClick={() => setFilterDate('')}
+                  className="px-3 py-2 bg-white/90 hover:bg-white text-gray-800 rounded-lg text-sm font-medium transition-all"
+                >
+                  Limpar
+                </button>
+              )}
+            </div>
           </div>
         </div>
+
+        <div className="p-8">
         <div className="overflow-x-auto">
           <table className="table-theme">
             <thead className="bg-gray-50">
@@ -435,7 +490,7 @@ function Dashboard() {
                         <>
                           <button
                             onClick={() => handleEditClick(reg)}
-                            className="text-cyan-600 hover:text-cyan-800 disabled:opacity-30 inline-flex items-center gap-1"
+                            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-cyan-100 text-cyan-600 hover:bg-cyan-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
                             disabled={processingAction}
                             title="Editar"
                           >
@@ -443,7 +498,7 @@ function Dashboard() {
                           </button>
                           <button
                             onClick={() => handleDeleteClick(reg.id)}
-                            className="text-red-600 hover:text-red-800 disabled:opacity-30 inline-flex items-center gap-1"
+                            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm hover:shadow-md disabled:opacity-30"
                             disabled={processingAction}
                             title="Excluir"
                           >
@@ -457,6 +512,7 @@ function Dashboard() {
               )}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </MainLayout>

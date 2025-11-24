@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import type { HistoryParams } from '../types/history';
+import { TrendingUp, BarChart3, Award, Target } from 'lucide-react';
 
 function History() {
   const { getUser } = useAuth();
@@ -130,14 +131,29 @@ function History() {
 
   return (
     <MainLayout activePage="progress">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-6 animate-fade-in-up">
-        Histórico de Registros
-      </h1>
+      <div className="mb-8 animate-fade-in-up">
+        <div className="flex items-center gap-4 mb-2">
+          <div className="p-3 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl shadow-lg">
+            <TrendingUp size={32} className="text-white" />
+          </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">
+            Histórico de Registros
+          </h1>
+        </div>
+        <p className="text-gray-600 ml-16">Acompanhe seu progresso e conquistas ao longo do tempo</p>
+      </div>
 
-      <div className="card-theme p-6 mb-8 animate-fade-in-up card-header-accent">
-        <strong className="block text-sm font-medium text-gray-700 mb-3">
-          Selecionar Hábito
-        </strong>
+      <div className="card-theme overflow-hidden mb-8 animate-fade-in-up">
+        <div className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 px-8 py-6 text-white">
+          <div className="flex items-center gap-3">
+            <Target size={24} />
+            <div>
+              <h3 className="text-xl font-bold">Selecionar Hábito</h3>
+              <p className="text-white/80 text-sm mt-1">Escolha qual atividade deseja acompanhar</p>
+            </div>
+          </div>
+        </div>
+        <div className="p-6">
         {loadingHabits ? (
           <p className="text-gray-500">Carregando hábitos...</p>
         ) : (
@@ -153,6 +169,7 @@ function History() {
             ))}
           </div>
         )}
+        </div>
       </div>
 
       {error && (
@@ -167,30 +184,37 @@ function History() {
         </div>
       ) : history && selectedHabit ? (
         <>
-        <div className="card-theme p-6 mb-6 animate-fade-in-up card-header-accent">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Taxa de Conquista da Meta
-          </h3>
-          <div className="grid grid-cols-5 gap-2 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">{goalStats.achieved}</div>
-              <div className="text-xs text-gray-600">✓ Batidas</div>
+        <div className="card-theme overflow-hidden mb-6 animate-fade-in-up">
+          <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 px-8 py-6 text-white">
+            <div className="flex items-center gap-3">
+              <Award size={24} />
+              <div>
+                <h3 className="text-xl font-bold">Taxa de Conquista da Meta</h3>
+                <p className="text-white/80 text-sm mt-1">Seu desempenho nos últimos 7 dias</p>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-orange-500">{goalStats.close}</div>
-              <div className="text-xs text-gray-600">~ Próximo</div>
+          </div>
+          <div className="p-6">
+          <div className="grid grid-cols-5 gap-3 mb-6">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-green-600">{goalStats.achieved}</div>
+              <div className="text-xs text-gray-700 font-medium mt-1">✓ Batidas</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-red-600">{goalStats.below}</div>
-              <div className="text-xs text-gray-600">✗ Abaixo</div>
+            <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-orange-500">{goalStats.close}</div>
+              <div className="text-xs text-gray-700 font-medium mt-1">~ Próximo</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{goalStats.freeProgress}</div>
-              <div className="text-xs text-gray-600">✓ Livre</div>
+            <div className="bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-200 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-red-600">{goalStats.below}</div>
+              <div className="text-xs text-gray-700 font-medium mt-1">✗ Abaixo</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-gray-400">{goalStats.noRecord}</div>
-              <div className="text-xs text-gray-600">- Vazio</div>
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-blue-600">{goalStats.freeProgress}</div>
+              <div className="text-xs text-gray-700 font-medium mt-1">✓ Livre</div>
+            </div>
+            <div className="bg-gradient-to-br from-gray-50 to-slate-50 border-2 border-gray-200 rounded-xl p-4 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-gray-400">{goalStats.noRecord}</div>
+              <div className="text-xs text-gray-700 font-medium mt-1">- Vazio</div>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-gray-200">
@@ -213,16 +237,21 @@ function History() {
               </p>
             )}
           </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="card-theme p-8 lg:col-span-1 animate-fade-in-up card-header-accent">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Visão Geral
-            </h3>
-            <p className="text-gray-600 text-sm mb-6">
-              Métricas de desempenho de {history.info.name}.
-            </p>
+          <div className="card-theme overflow-hidden lg:col-span-1 animate-fade-in-up">
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 px-6 py-5 text-white">
+              <div className="flex items-center gap-3">
+                <BarChart3 size={24} />
+                <div>
+                  <h3 className="text-lg font-bold">Visão Geral</h3>
+                  <p className="text-white/80 text-xs mt-1">Métricas de {history.info.name}</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
             <div className="space-y-5">
               <div className="flex justify-between items-center py-4 border-b border-gray-100">
                 <span className="text-gray-600">Média Semanal</span>
@@ -280,15 +309,20 @@ function History() {
                 })}
               </div>
             </div>
+            </div>
           </div>
 
-          <div className="card-theme p-8 lg:col-span-2 animate-fade-in-up card-header-accent">
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-              Histórico dos Últimos 7 Dias
-            </h3>
-            <p className="text-gray-600 text-sm mb-6">
-              Comparação da meta com os registros de {history.info.name}.
-            </p>
+          <div className="card-theme overflow-hidden lg:col-span-2 animate-fade-in-up">
+            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-5 text-white">
+              <div className="flex items-center gap-3">
+                <TrendingUp size={24} />
+                <div>
+                  <h3 className="text-lg font-bold">Histórico dos Últimos 7 Dias</h3>
+                  <p className="text-white/80 text-xs mt-1">Comparação da meta com {history.info.name}</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -336,6 +370,7 @@ function History() {
                 />
               </LineChart>
             </ResponsiveContainer>
+            </div>
           </div>
         </div>
         </>

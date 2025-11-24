@@ -4,9 +4,9 @@ import { useAuth } from '../hooks/useAuth';
 import { User, LogOut } from 'lucide-react';
 
 const navItems = [
-  { id: 'goals', name: 'Atividades', path: '/' },
-  { id: 'progress', name: 'Progresso', path: '/history' },
-  { id: 'settings', name: 'Configurações', path: '/settings' },
+  { id: 'goals', name: 'Atividades', path: '/', emoji: '🎯' },
+  { id: 'progress', name: 'Progresso', path: '/history', emoji: '📈' },
+  { id: 'settings', name: 'Configurações', path: '/settings', emoji: '⚙️' },
 ];
 
 function MainLayout({ children, activePage }: MainLayoutProps) {
@@ -33,16 +33,16 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
 
   const getNavLinkClass = (page: string) => {
     const baseClass =
-      'flex items-center gap-3 px-5 py-4 rounded-lg font-medium transition-colors';
+      'flex items-center gap-3 px-5 py-4 rounded-lg font-medium transition-all';
     if (page === activePage) {
-      return `${baseClass} bg-white text-gray-900 shadow-sm`;
+      return `${baseClass} bg-white text-gray-900 shadow-md`;
     }
-    return `${baseClass} text-gray-600 hover:bg-gray-200/50`;
+    return `${baseClass} text-gray-700 hover:bg-stone-200/70 hover:shadow-sm`;
   };
 
   return (
     <div className="flex min-h-screen bg-white">
-      <nav className="hidden md:flex md:w-64 bg-gray-50 border-r border-gray-200 p-6 flex-col">
+      <nav className="hidden md:flex md:w-64 bg-gradient-to-b from-stone-200 via-stone-100 to-zinc-50 border-r border-stone-300 p-6 flex-col shadow-lg">
         <div className="text-2xl font-bold text-cyan-600 mb-10">Habitus</div>
         <ul className="space-y-2">
           {navItems.map((item) => (
@@ -52,6 +52,7 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
                 className={getNavLinkClass(item.id)}
                 onClick={() => navigate(item.path)}
               >
+                <span className="text-xl">{item.emoji}</span>
                 <span>{item.name}</span>
               </button>
             </li>
@@ -65,12 +66,12 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
             className="absolute inset-0 bg-black/40"
             onClick={() => setIsSidebarOpen(false)}
           />
-          <nav className="relative z-50 w-64 h-full bg-gray-50 border-r border-gray-200 p-6 flex flex-col">
+          <nav className="relative z-50 w-64 h-full bg-gradient-to-b from-stone-200 via-stone-100 to-zinc-50 border-r border-stone-300 p-6 flex flex-col shadow-lg">
             <div className="flex items-center justify-between mb-8">
               <div className="text-2xl font-bold text-cyan-600">Habitus</div>
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="p-2 rounded hover:bg-gray-200"
+                className="p-2 rounded hover:bg-gray-500/50 transition-all"
                 aria-label="Close menu"
               >
                 ✕
@@ -84,6 +85,7 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
                     className={getNavLinkClass(item.id)}
                     onClick={() => setIsSidebarOpen(false)}
                   >
+                    <span className="text-xl">{item.emoji}</span>
                     <span>{item.name}</span>
                   </a>
                 </li>
@@ -93,9 +95,9 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
         </div>
       )}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-[70px] border-b border-gray-200 flex items-center justify-between px-4 sm:px-6 md:px-8">
+        <header className="h-[70px] bg-gradient-to-r from-stone-200 via-stone-100 to-zinc-50 border-b border-stone-300 flex items-center justify-between px-4 sm:px-6 md:px-8 shadow-sm">
           <button
-            className="md:hidden p-2 rounded hover:bg-gray-100"
+            className="md:hidden p-2 rounded hover:bg-stone-200 transition-all"
             onClick={() => setIsSidebarOpen(true)}
             aria-label="Open menu"
           >
@@ -106,11 +108,11 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setIsMenuOpen((v) => !v)}
-              className="flex items-center gap-2 p-1.5 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
+              className="flex items-center gap-2 p-1.5 rounded-full hover:bg-stone-200 transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
               aria-haspopup="menu"
               aria-expanded={isMenuOpen}
             >
-              <User className="text-gray-500" size={20} />
+              <User className="text-gray-700" size={20} />
             </button>
 
             {isMenuOpen && (
@@ -156,7 +158,7 @@ function MainLayout({ children, activePage }: MainLayoutProps) {
         </header>
 
         {/* Conteúdo da Página */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 sm:p-6 md:p-10">
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-stone-200/80 via-stone-100/90 to-zinc-50 p-4 sm:p-6 md:p-10">
           {children}
         </main>
       </div>
