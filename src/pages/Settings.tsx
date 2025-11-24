@@ -6,6 +6,7 @@ import GoalModal, {
   type GoalType,
   type GoalValue,
 } from '../components/GoalModal';
+import GoalHistoryModal from '../components/GoalHistoryModal';
 import { ProfileModal } from '../components/ProfileModal';
 import { useAuth } from '../hooks/useAuth';
 import { Activity, Droplet, LogOut, Moon, User } from 'lucide-react';
@@ -23,8 +24,11 @@ function Settings() {
   const [editLoading, setEditLoading] = useState(false);
 
   const [activeGoalType, setActiveGoalType] = useState<GoalType | null>(null);
+  const [showGoalHistory, setShowGoalHistory] = useState(false);
+  const [showGoalForm, setShowGoalForm] = useState(false);
   const [goalModalError, setGoalModalError] = useState<string | null>(null);
   const [goalModalLoading, setGoalModalLoading] = useState(false);
+  const [editingGoalId, setEditingGoalId] = useState<number | null>(null);
   const [currentGoals, setCurrentGoals] = useState<
     Record<GoalType, GoalValue | null>
   >({
@@ -106,13 +110,55 @@ function Settings() {
   };
 
   const openGoalModal = (goalType: GoalType) => {
+    console.log('Opening goal modal for:', goalType);
     setGoalModalError(null);
     setActiveGoalType(goalType);
+    setShowGoalHistory(true);
+    setEditingGoalId(null);
+    console.log('Modal state set - showGoalHistory:', true, 'activeGoalType:', goalType);
   };
 
-  const closeGoalModal = () => {
+  const closeGoalHistory = () => {
+    setShowGoalHistory(false);
     setActiveGoalType(null);
+  };
+
+  const openGoalForm = () => {
+    setShowGoalHistory(false);
+    setShowGoalForm(true);
+  };
+
+  const closeGoalForm = () => {
+    setShowGoalForm(false);
     setGoalModalError(null);
+    setEditingGoalId(null);
+  };
+
+  const handleEditGoal = (goal: {
+    id: number;
+    dailyGoal: number;
+    measurementUnitId: number;
+    weeklyFrequency: number;
+  }) => {
+    console.log('Edit goal:', goal);
+    
+    if (!activeGoalType) return;
+    
+    // Salvar ID da meta sendo editada
+    setEditingGoalId(goal.id);
+    
+    // Pré-preencher o formulário com os dados da meta
+    setCurrentGoals((prev) => ({
+      ...prev,
+      [activeGoalType]: {
+        value: goal.dailyGoal.toString(),
+        measurementUnitId: goal.measurementUnitId,
+        weeklyFrequency: goal.weeklyFrequency.toString(),
+      },
+    }));
+    
+    setShowGoalHistory(false);
+    setShowGoalForm(true);
   };
 
   const handleSaveGoal = async (goal: GoalValue, habitId: number) => {
@@ -136,13 +182,22 @@ function Settings() {
         weeklyFrequency: parseInt(goal.weeklyFrequency),
       };
 
-      await api.post('/user-habits', payload);
+      if (editingGoalId) {
+        // Atualizar meta existente
+        await api.put(`/user-habits/${editingGoalId}`, payload);
+        setSuccess(
+          `Meta de ${goalTypeLabels[activeGoalType]} atualizada com sucesso!`
+        );
+      } else {
+        // Criar nova meta
+        await api.post('/user-habits', payload);
+        setSuccess(
+          `Meta de ${goalTypeLabels[activeGoalType]} salva com sucesso!`
+        );
+      }
 
       setCurrentGoals((prev) => ({ ...prev, [activeGoalType]: goal }));
-      setSuccess(
-        `Meta de ${goalTypeLabels[activeGoalType]} salva com sucesso!`
-      );
-      closeGoalModal();
+      closeGoalForm();
       setTimeout(() => setSuccess(null), 3000);
     } catch (err: unknown) {
       const error = err as { message?: string; response?: { status: number } };
@@ -162,10 +217,11 @@ function Settings() {
   };
 
   return (
-    <MainLayout activePage="settings">
-      <h1 className="text-3xl font-semibold text-gray-800 mb-8 animate-fade-in-up">
-        Configurações
-      </h1>
+    <>
+      <MainLayout activePage="settings">
+        <h1 className="text-3xl font-semibold text-gray-800 mb-8 animate-fade-in-up">
+          Configurações
+        </h1>
 
       {/* Seção 1: Minha Conta */}
       <div className="card-theme p-8 mb-8 animate-fade-in-up card-header-accent">
@@ -245,41 +301,6 @@ function Settings() {
         </div>
       )}
 
-      {activeGoalType && (
-        <GoalModal
-          isOpen
-          goalType={activeGoalType}
-          currentGoal={currentGoals[activeGoalType]}
-          loading={goalModalLoading}
-          errorMessage={goalModalError}
-          onClose={closeGoalModal}
-          onSave={handleSaveGoal}
-        />
-      )}
-
-      <ProfileModal
-        isOpen={showEditProfile}
-        editName={editName}
-        editEmail={editEmail}
-        editOldPassword={editOldPassword}
-        editNewPassword={editNewPassword}
-        editError={editError}
-        editLoading={editLoading}
-        onNameChange={setEditName}
-        onEmailChange={setEditEmail}
-        onOldPasswordChange={setEditOldPassword}
-        onNewPasswordChange={setEditNewPassword}
-        onSubmit={handleEditProfile}
-        onClose={() => {
-          setShowEditProfile(false);
-          setEditError(null);
-          setEditName('');
-          setEditEmail('');
-          setEditOldPassword('');
-          setEditNewPassword('');
-        }}
-      />
-
       <button
         onClick={handleLogout}
         className="btn-logout active:scale-[.98] flex items-center justify-center gap-2"
@@ -288,6 +309,56 @@ function Settings() {
         <span>Sair da Conta</span>
       </button>
     </MainLayout>
+
+    {/* Modais fora do MainLayout */}
+    {activeGoalType && showGoalHistory && (
+      <GoalHistoryModal
+        isOpen={showGoalHistory}
+        goalType={activeGoalType}
+        habitId={activeGoalType === 'sleep' ? 2 : activeGoalType === 'water' ? 1 : 3}
+        onClose={closeGoalHistory}
+        onAddNew={openGoalForm}
+        onEdit={handleEditGoal}
+        getUser={getUser}
+      />
+    )}
+
+    {activeGoalType && showGoalForm && (
+      <GoalModal
+        isOpen={showGoalForm}
+        goalType={activeGoalType}
+        currentGoal={currentGoals[activeGoalType]}
+        loading={goalModalLoading}
+        errorMessage={goalModalError}
+        isEditing={editingGoalId !== null}
+        onClose={closeGoalForm}
+        onSave={handleSaveGoal}
+      />
+    )}
+
+    <ProfileModal
+      isOpen={showEditProfile}
+      editName={editName}
+      editEmail={editEmail}
+      editOldPassword={editOldPassword}
+      editNewPassword={editNewPassword}
+      editError={editError}
+      editLoading={editLoading}
+      onNameChange={setEditName}
+      onEmailChange={setEditEmail}
+      onOldPasswordChange={setEditOldPassword}
+      onNewPasswordChange={setEditNewPassword}
+      onSubmit={handleEditProfile}
+      onClose={() => {
+        setShowEditProfile(false);
+        setEditError(null);
+        setEditName('');
+        setEditEmail('');
+        setEditOldPassword('');
+        setEditNewPassword('');
+      }}
+    />
+    </>
   );
 }
 

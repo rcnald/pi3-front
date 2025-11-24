@@ -1,4 +1,5 @@
 import { useEffect, useId, useMemo, useState } from 'react';
+import { Save, X, Target } from 'lucide-react';
 import { Habits } from '../types/habit.d';
 import { MeasurementUnitsEnum } from '../types/measurementUnit.d';
 
@@ -13,6 +14,24 @@ export type GoalValue = {
   value: string;
   measurementUnitId: number;
   weeklyFrequency: string;
+};
+
+const goalTypeColors: Record<GoalType, { gradient: string; buttonBg: string; inputFocus: string }> = {
+  sleep: {
+    gradient: 'from-cyan-500 via-blue-500 to-teal-500',
+    buttonBg: 'bg-cyan-600 hover:bg-cyan-700 border-cyan-600',
+    inputFocus: 'focus:border-cyan-500 focus:ring-cyan-500',
+  },
+  water: {
+    gradient: 'from-cyan-500 via-blue-500 to-teal-500',
+    buttonBg: 'bg-cyan-600 hover:bg-cyan-700 border-cyan-600',
+    inputFocus: 'focus:border-cyan-500 focus:ring-cyan-500',
+  },
+  activity: {
+    gradient: 'from-cyan-500 via-blue-500 to-teal-500',
+    buttonBg: 'bg-cyan-600 hover:bg-cyan-700 border-cyan-600',
+    inputFocus: 'focus:border-cyan-500 focus:ring-cyan-500',
+  },
 };
 
 const GOAL_CONFIG: Record<
@@ -80,6 +99,7 @@ export type GoalModalProps = {
   currentGoal?: GoalValue | null;
   loading?: boolean;
   errorMessage?: string | null;
+  isEditing?: boolean;
   onClose: () => void;
   onSave: (goal: GoalValue, habitId: number) => Promise<void> | void;
 };
@@ -90,6 +110,7 @@ const GoalModal = ({
   currentGoal,
   loading = false,
   errorMessage,
+  isEditing = false,
   onClose,
   onSave,
 }: GoalModalProps) => {
@@ -167,67 +188,67 @@ const GoalModal = ({
   };
 
   const combinedError = localError ?? errorMessage;
+  const colors = goalTypeColors[goalType];
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fade-in">
       <div
-        className="absolute inset-0 bg-black/30 backdrop-blur-md"
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
         role="presentation"
       />
 
-      <div className="relative w-full max-w-2xl rounded-lg border border-gray-200 bg-white p-8 shadow-xl">
-        <h3 className="mb-8 text-center text-xl font-semibold text-gray-800">
-          {config.title}
-        </h3>
-
-        {combinedError && (
-          <div
-            className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700"
-            role="alert"
-          >
-            {combinedError}
+      <div className="relative w-full max-w-2xl rounded-2xl bg-white shadow-2xl overflow-hidden animate-slide-up">
+        {/* Gradient Header */}
+        <div className={`relative bg-gradient-to-r ${colors.gradient} px-8 py-8 text-white overflow-hidden`}>
+          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+          
+          <div className="relative flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl shadow-lg">
+                <Target size={32} className="text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold">
+                  {isEditing ? config.title.replace('Cadastrar', 'Atualizar') : config.title}
+                </h3>
+                <p className="text-white/80 text-sm mt-1">Defina sua meta e frequência semanal</p>
+              </div>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-white/20 transition-all duration-200 active:scale-95"
+              aria-label="Fechar"
+            >
+              <X size={24} />
+            </button>
           </div>
-        )}
+        </div>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          {currentGoal?.value && (
-            <div className="rounded-lg border border-gray-300 p-6">
-              <span className="mb-4 block text-center font-medium text-gray-700">
-                Meta atual
-              </span>
-              <div className="flex flex-wrap justify-center gap-4">
-                <input
-                  type="text"
-                  value={currentGoal.value}
-                  readOnly
-                  className="w-48 rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
-                />
-                <input
-                  type="text"
-                  value={
-                    config.unitOptions.find(
-                      (opt) => opt.value === currentGoal.measurementUnitId
-                    )?.label ?? 'Unidade'
-                  }
-                  readOnly
-                  className="w-48 rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg text-gray-700"
-                />
+        <div className="p-8">
+
+          {combinedError && (
+            <div
+              className="mb-6 rounded-xl border-2 border-red-300 bg-red-50 px-5 py-4 text-sm text-red-700 shadow-sm animate-shake"
+              role="alert"
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-red-500 font-bold text-lg">⚠</span>
+                <span className="font-medium">{combinedError}</span>
               </div>
             </div>
           )}
 
-          <div className="rounded-lg border border-gray-300 p-6">
-            <span className="mb-4 block text-center font-medium text-gray-700">
-              Meta nova
-            </span>
-
-            <div className="mb-6 flex flex-col gap-2">
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* Weekly Frequency */}
+            <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-gray-50 to-white shadow-sm hover:shadow-md transition-shadow">
               <label
-                className="text-sm font-medium text-gray-600"
+                className="flex items-center gap-2 text-base font-bold text-gray-700 mb-3"
                 htmlFor={weeklyFrequencyInputId}
               >
-                Frequência Semanal (dias por semana)
+                <span className="text-2xl">📅</span>
+                Frequência Semanal
               </label>
               <input
                 id={weeklyFrequencyInputId}
@@ -237,79 +258,100 @@ const GoalModal = ({
                 step="1"
                 value={weeklyFrequency}
                 onChange={(event) => setWeeklyFrequency(event.target.value)}
-                placeholder="Ex: 3"
-                className="rounded-md border-2 border-gray-400 px-4 py-3 text-lg focus:border-cyan-500 focus:outline-none"
+                placeholder="Ex: 5"
+                className={`w-full rounded-xl border-2 border-gray-300 px-6 py-4 text-lg font-semibold text-center ${colors.inputFocus} focus:outline-none focus:ring-2 transition-all`}
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Escolha de 1 a 7 vezes por semana
+              <p className="text-xs text-gray-500 mt-3 text-center font-medium">
+                🎯 Escolha de 1 a 7 dias por semana
               </p>
             </div>
 
-            <div className="flex flex-wrap justify-center gap-4">
-              <div className="flex w-48 flex-col gap-1">
-                <label
-                  className="text-sm font-medium text-gray-600"
-                  htmlFor={valueInputId}
-                >
-                  {config.valueInputLabel}
-                </label>
-                <input
-                  id={valueInputId}
-                  type="number"
-                  min={config.minValue}
-                  step={config.step}
-                  value={newGoalValue}
-                  onChange={(event) => setNewGoalValue(event.target.value)}
-                  className="rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg focus:border-cyan-500 focus:outline-none"
-                />
+            {/* Goal Value and Unit */}
+            <div className="rounded-xl border-2 border-gray-200 p-6 bg-gradient-to-br from-white to-gray-50 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🎯</span>
+                <h4 className="text-base font-bold text-gray-700">Meta Diária</h4>
               </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1">
+                  <label
+                    className="block text-sm font-semibold text-gray-600 mb-2"
+                    htmlFor={valueInputId}
+                  >
+                    {config.valueInputLabel}
+                  </label>
+                  <input
+                    id={valueInputId}
+                    type="number"
+                    min={config.minValue}
+                    step={config.step}
+                    value={newGoalValue}
+                    onChange={(event) => setNewGoalValue(event.target.value)}
+                    placeholder="0"
+                    className={`w-full rounded-xl border-2 border-gray-300 px-6 py-4 text-2xl font-bold text-center ${colors.inputFocus} focus:outline-none focus:ring-2 transition-all`}
+                  />
+                </div>
 
-              <div className="flex w-48 flex-col gap-1">
-                <label
-                  className="text-sm font-medium text-gray-600"
-                  htmlFor={unitInputId}
-                >
-                  {config.unitInputLabel}
-                </label>
-                <select
-                  id={unitInputId}
-                  value={newGoalUnit}
-                  onChange={(event) =>
-                    setNewGoalUnit(Number(event.target.value))
-                  }
-                  className="rounded-md border-2 border-gray-400 px-4 py-3 text-center text-lg focus:border-cyan-500 focus:outline-none"
-                >
-                  {config.unitOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex-1">
+                  <label
+                    className="block text-sm font-semibold text-gray-600 mb-2"
+                    htmlFor={unitInputId}
+                  >
+                    {config.unitInputLabel}
+                  </label>
+                  <select
+                    id={unitInputId}
+                    value={newGoalUnit}
+                    onChange={(event) =>
+                      setNewGoalUnit(Number(event.target.value))
+                    }
+                    className={`w-full rounded-xl border-2 border-gray-300 px-6 py-4 text-lg font-semibold text-center ${colors.inputFocus} focus:outline-none focus:ring-2 transition-all cursor-pointer`}
+                  >
+                    {config.unitOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 rounded-md border-2 border-gray-400 px-6 py-3 text-center font-semibold text-gray-700 transition hover:bg-gray-100"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className={`flex-1 rounded-md border-2 px-6 py-3 text-center font-semibold text-white transition ${
-                loading
-                  ? 'border-cyan-300 bg-cyan-300'
-                  : 'border-cyan-600 bg-cyan-600 hover:bg-cyan-700'
-              }`}
-            >
-              {loading ? 'Salvando...' : 'Salvar'}
-            </button>
-          </div>
-        </form>
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl border-2 border-gray-300 bg-white px-6 py-4 font-bold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 active:scale-95 shadow-sm"
+              >
+                <X size={20} />
+                <span>Cancelar</span>
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`flex-1 flex items-center justify-center gap-2 rounded-xl border-2 px-6 py-4 font-bold text-white transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95 ${
+                  loading
+                    ? 'bg-gray-400 border-gray-400 cursor-not-allowed'
+                    : colors.buttonBg
+                }`}
+              >
+                {loading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Salvando...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save size={20} />
+                    <span>Salvar Meta</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
