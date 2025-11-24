@@ -114,15 +114,6 @@ const GoalHistoryModal = ({
 
   // UPDATE - Atualizar uma meta existente
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleUpdate = async (habitId: number, updatedData: Partial<UserHabit>) => {
-    try {
-      await apiService.put(`/api/user-habits/${habitId}`, updatedData);
-      await fetchGoals(); // Recarregar lista após atualização
-    } catch (err) {
-      console.error('Error updating goal:', err);
-      alert('Erro ao atualizar meta.');
-    }
-  };
 
   // DELETE - Deletar uma meta
   const handleDelete = async (habitId: number) => {
